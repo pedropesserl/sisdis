@@ -1,3 +1,6 @@
+// Eduardo Faria Kruger  GRR20232329
+// Pedro Folloni Pesserl GRR20220072
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "smpl.h"
@@ -41,7 +44,7 @@ int main(int argc, char **argv) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 30.0, i); // todos vão testar na unidade de tempo 30
     }
-    schedule(FAULT, 31.0, 1);
+    schedule(FAULT,    31.0, 1);
     schedule(RECOVERY, 61.0, 1);
 
     // loop principal do simulador
@@ -54,7 +57,9 @@ int main(int argc, char **argv) {
                 if (status(processos[token].id) != 0) {
                     break; // processo falho não testa
                 }
-                printf("Sou o processo %d e estou testando no tempo %4.1f\n", token, time());
+                int prox = (token + 1) % N;
+                char *s = status(processos[prox].id) == 0 ? "correto" : "suspeito";
+                printf("O processo %d testou o processo %d %s no tempo %4.1f\n", token, prox, s, time());
                 schedule(TEST, 30.0, token);
                 break;
             case FAULT:
