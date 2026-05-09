@@ -16,6 +16,21 @@ typedef struct {
 
 Processo *processos;
 
+void init_simulacao(int N, char fa_name[5]) {
+    smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
+    reset();
+    stream(1);
+
+    // inicializar os N processos
+    memset(processos, '\0', sizeof(Processo) * N);
+    for (int i = 0; i < N; i++) {
+        memset(fa_name, '\0', 5);
+        sprintf(fa_name, "%c", (char)i);
+        processos[i].id = facility(fa_name, 1);
+    }
+
+}
+
 void escalona_simples(int N) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 30.0, i); // todos vao testar na unidade de tempo 30
@@ -44,13 +59,12 @@ void simula(int N, int max_unidades_tempo) {
                     break; // processo falho nao testa
                 }
                 int prox = (token + 1) % N;
-                // TODO: testar tudo na mesma unidade de tempo ou agendar para a proxima unidade de tempo?
                 while (status(processos[prox].id) != 0) {
                     printf("O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, prox, time());
                     prox = (prox + 1) % N;
                 }
                 if (prox == token) {
-                    printf("O processo %d testou todos os demais processos suspeitos no tempo %4.1f\n.", token, time());
+                    printf("O processo %d testou todos os demais processos suspeitos no tempo %4.1f\n", token, time());
                 } else {
                     printf("O processo %d testou o processo %d correto no tempo %4.1f\n", token, prox, time());
                 }
@@ -82,25 +96,15 @@ int main(int argc, char **argv) {
     }
 
     int N = atoi(argv[1]); // numero de processos do sistema distribuido
-
-    smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
-    reset();
-    stream(1);
-
-    // inicializar os N processos
     processos = malloc(sizeof(Processo) * N);
-    for (int i = 0; i < N; i++) {
-        memset(fa_name, '\0', 5);
-        sprintf(fa_name, "%c", (char)i);
-        processos[i].id = facility(fa_name, 1);
-    }
 
-    // printf("-------------- teste normal --------------\n");
-    // escalona_simples(N);
-    // simula(N, MaxTempoSimulac);
+    printf("-------------- teste normal --------------\n");
+    init_simulacao(N, fa_name);
+    escalona_simples(N);
+    simula(N, MaxTempoSimulac);
 
-    // TODO: como testar um depois do outro na mesma execucao?
     printf("-------------- teste falhas --------------\n");
+    init_simulacao(N, fa_name);
     escalona_falhas(N);
     simula(N, MaxTempoSimulac);
 
