@@ -9,9 +9,15 @@
 #define FAULT    2
 #define RECOVERY 3
 
+typedef enum {
+    UNKNOWN = -1,
+    CORRETO = 0,
+    FALHO = 1,
+} State;
+
 typedef struct {
     int id; // identificador de facility do SMPL
-            // outras variaveis locais de cada processo sao declaradas aqui
+    State *states;
 } Processo;
 
 Processo *processos;
@@ -22,13 +28,18 @@ void init_simulacao(int N, char fa_name[5]) {
     stream(1);
 
     // inicializar os N processos
-    memset(processos, '\0', sizeof(Processo) * N);
+    for (int i = 0; i < N; i++) {
+        processos[i].id = 0;
+    }
     for (int i = 0; i < N; i++) {
         memset(fa_name, '\0', 5);
         sprintf(fa_name, "%c", (char)i);
         processos[i].id = facility(fa_name, 1);
+        for (int j = 0; j < N; j++) {
+            processos[i].states[j] = UNKNOWN;
+        }
+        processos[i].states[i] = CORRETO;
     }
-
 }
 
 void escalona_simples(int N) {
@@ -61,13 +72,20 @@ void simula(int N, int max_unidades_tempo) {
                 int prox = (token + 1) % N;
                 while (status(processos[prox].id) != 0) {
                     printf("O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, prox, time());
+                    processos[token].states[prox] = FALHO;
                     prox = (prox + 1) % N;
                 }
                 if (prox == token) {
                     printf("O processo %d testou todos os demais processos suspeitos no tempo %4.1f\n", token, time());
                 } else {
                     printf("O processo %d testou o processo %d correto no tempo %4.1f\n", token, prox, time());
+                    processos[token].states[prox] = CORRETO;
                 }
+                printf("  processo[%d].states: [ ", token);
+                for (int j = 0; j < N; j++) {
+                    printf("%2d ", (int)processos[token].states[j]);
+                }
+                printf("]\n");
                 schedule(TEST, 30.0, token);
                 break;
             case FAULT:
@@ -97,6 +115,9 @@ int main(int argc, char **argv) {
 
     int N = atoi(argv[1]); // numero de processos do sistema distribuido
     processos = malloc(sizeof(Processo) * N);
+    for (int i = 0; i < N; i++) {
+        processos[i].states = malloc(sizeof(State) * N);
+    }
 
     printf("-------------- teste normal --------------\n");
     init_simulacao(N, fa_name);
@@ -107,6 +128,11 @@ int main(int argc, char **argv) {
     init_simulacao(N, fa_name);
     escalona_falhas(N);
     simula(N, MaxTempoSimulac);
+
+    for (int i = 0; i < N; i++) {
+        free(processos[i].states);
+    }
+    free(processos);
 
     return 0;
 }

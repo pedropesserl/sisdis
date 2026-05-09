@@ -1,7 +1,7 @@
 all: tempo
 
 tempo: tempo.o smpl.o rand.o
-	$(LINK.c) -o $@ -Bstatic tempo.o smpl.o rand.o -lm
+	$(LINK.c) -o $@ -Bstatic tempo.o smpl.o rand.o -lm -ggdb
 
 smpl.o: smpl.c smpl.h
 	$(COMPILE.c)  -g smpl.c
