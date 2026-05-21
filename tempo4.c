@@ -1,7 +1,9 @@
 // Autor: Pedro Folloni Pesserl GRR20220072
 // Data ultima modificacao: 13/05/2026
-// Funcionalidade: Simulacao de sistema distribuido: cada processo tem um vetor de estados dos demais processos
+// Funcionalidade: Simulacao de sistema distribuido: quando um processo correto testa outro processo correto, obtem informacoes sobre os processos que nao testou nessa rodada
 
+#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include "smpl.h"
@@ -13,12 +15,13 @@
 typedef enum {
     UNKNOWN = -1,
     CORRETO = 0,
-    FALHO = 1,
+    FALHO   = 1,
 } State;
 
 typedef struct {
-    int id; // identificador de facility do SMPL
-    State *states;
+    int id;        // identificador de facility do SMPL
+    State *states; // crenca do processo a respeito dos estados dos demais
+    bool *tested;  // processos que testou nessa rodada
 } Processo;
 
 Processo *processos;
@@ -38,8 +41,10 @@ void init_simulacao(int N, char fa_name[5]) {
         processos[i].id = facility(fa_name, 1);
         for (int j = 0; j < N; j++) {
             processos[i].states[j] = UNKNOWN;
+            processos[i].tested[j] = false;
         }
         processos[i].states[i] = CORRETO;
+        processos[i].tested[i] = true;
     }
 }
 
@@ -83,6 +88,7 @@ void simula(int N, int max_unidades_tempo) {
                 while (status(processos[prox].id) != 0) {
                     printf("O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, prox, time());
                     processos[token].states[prox] = FALHO;
+                    processos[token].tested[prox] = true;
                     prox = (prox + 1) % N;
                 }
                 if (prox == token) {
@@ -90,10 +96,19 @@ void simula(int N, int max_unidades_tempo) {
                 } else {
                     printf("O processo %d testou o processo %d correto no tempo %4.1f\n", token, prox, time());
                     processos[token].states[prox] = CORRETO;
+                    processos[token].tested[prox] = true;
+                    printf("  obteve informacao sobre: [");
+                    for (int i = 0; i < N; i++) {
+                        if (!processos[token].tested[i] && processos[prox].states[i] != UNKNOWN) {
+                            processos[token].states[i] = processos[prox].states[i];
+                            printf("%2d ", i);
+                        }
+                    }
+                    printf("]\n");
                 }
-                printf("  processo[%d].states: [ ", token);
-                for (int j = 0; j < N; j++) {
-                    printf("%2d ", (int)processos[token].states[j]);
+                printf("    crenca do processo %d sobre os demais processos: [ ", token);
+                for (int i = 0; i < N; i++) {
+                    printf("%2d ", (int)processos[token].states[i]);
                 }
                 printf("]\n");
                 schedule(TEST, 30.0, token);
@@ -114,8 +129,6 @@ void simula(int N, int max_unidades_tempo) {
 }
 
 int main(int argc, char **argv) {
-    int MaxTempoSimulac = 150;
-
     char fa_name[5]; // facility name
     
     if (argc != 2) {
@@ -124,9 +137,16 @@ int main(int argc, char **argv) {
     }
 
     int N = atoi(argv[1]); // numero de processos do sistema distribuido
+
+    int MaxTempoSimulac = 30 * N;
+
     processos = malloc(sizeof(Processo) * N);
+    assert(processos != NULL);
     for (int i = 0; i < N; i++) {
         processos[i].states = malloc(sizeof(State) * N);
+        assert(processos[i].states != NULL);
+        processos[i].tested = malloc(sizeof(bool) * N);
+        assert(processos[i].tested != NULL);
     }
 
     printf("--------------------- teste: sem falhas -------------------\n");
@@ -146,6 +166,7 @@ int main(int argc, char **argv) {
 
     for (int i = 0; i < N; i++) {
         free(processos[i].states);
+        free(processos[i].tested);
     }
     free(processos);
 
