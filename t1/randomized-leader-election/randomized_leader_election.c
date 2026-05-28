@@ -30,13 +30,17 @@ typedef enum {
     FALHO   = 1,
 } State;
 
+candidates {
+  id: bit
+}
+
 typedef struct {
     int id;           // identificador de facility do SMPL
     int pid;
     int bit;
-    int leader_id;
+
     int num_candidates;
-    int *candidates;
+
     int msg;          // buffer da mensagem recebida
     bool *tested;     // processos que testou nessa rodada
     State *states;    // crenca do processo a respeito dos estados dos demais
@@ -81,7 +85,6 @@ void sort_single_candidate(int N) {
         processos[i].leader_id = -1;
     }
     processos[0].leader_id = 0;
-    printf("O id do processo 0 eh: %d, seu leader_id eh: %d\n", processos[0].id, processos[0].leader_id);
 }
 
 void print_candidates(int N) {
@@ -101,11 +104,13 @@ void init_simulacao(int N, char fa_name[5]) {
 
     // inicializar os N processos
     for (int i = 0; i < N; i++) {
+        processos[i].num_candidates = 0;
         processos[i].id = 0;
         processos[i].bit = randomic(0, 1);
         processos[i].msg = -1;
         if(processos[i].bit == 1)
         {
+          printf("prova de que tá inserindo alguma coisa memo");
           insere_ordenado(processos[i].candidates, &(processos[i].num_candidates), i);
         }
     }
@@ -186,7 +191,7 @@ void simula(int N, int max_unidades_tempo) {
                             printf("%2d ", i);
                         }
                     }
-                    printf("]\n");
+                     printf("]\n");
 
 
                     // envia_mensagem se ja nao for lider
@@ -216,7 +221,7 @@ void simula(int N, int max_unidades_tempo) {
                 
             //diferente do caso SEND, o RECEIVE eh um evento que deve ser tratado
             case RECEIVE:
-                printf("o processo %d recebeu a mensagem")
+                printf("o processo d recebeu a mensagem");
                 break;
 
             
@@ -261,9 +266,9 @@ int main(int argc, char **argv) {
     {
       printf("ID do processo %d : %d \n", i, processos[i].pid);
       printf("bit do processo %d: %d \n", i, processos[i].bit);
-      printf("       O que o processo %d sabe sobre todos os processos: [ ", token);
-      for (int i = 0; i < N; i++) {
-          printf("%2d ", (int)p->states[i]);
+      printf("       Quais procesos %d acha que sao candidatos: [ ", i);
+      for (int j = 0; j < processos[i].num_candidates; j++) {
+          printf("%d ", processos[i].candidates[j]);
       }
       printf("]\n");
     }
