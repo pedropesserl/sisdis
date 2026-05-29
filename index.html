@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Relatório - Sistemas Distribuídos</title>
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css">
+
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+
+  <style>
+    body {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    pre {
+      background-color: #f8f9fa;
+      border: 1px solid #dee2e6;
+      padding: 1rem;
+      border-radius: 8px;
+      overflow-x: auto;
+    }
+
+    .section-divider {
+      margin-top: 4rem;
+      margin-bottom: 2rem;
+    }
+
+    img {
+      border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+
+<body class="container p-4">
+
+  <!-- CABEÇALHO -->
+  <header class="text-center mb-5">
+
+    <h1>Trabalho Prático de Sistemas Distribuídos</h1>
+
+    <p class="lead">
+      Relatório dos Algoritmos Implementados
+    </p>
+
+    <p>
+      Eduardo Faria Kruger GRR20232329 e Pedro Folloni Pesserl GRR20220072 <br>
+      Bacharelado em Ciência da Computação <br>
+      Departamento de Informática - UFPR <br>
+      Prof. Elias P. Duarte Jr.
+    </p>
+
+    <p>
+      Repositório do trabalho:
+      <a href="https://github.com/pedropesserl/sisdis">
+        https://github.com/pedropesserl/sisdis
+      </a>
+    </p>
+
+  </header>
+
+  <!-- INTRODUÇÃO -->
+  <section>
+
+    <h2>1. Introdução</h2>
+
+    <p>
+      Este relatório descreve a implementação dos algoritmos
+      de eleição de líder Chang-Roberts e Randomized Leader Election.
+    </p>
+
+    <p>
+      O objetivo deste trabalho é implementar algoritmos
+      de eleição de líder utilizando a biblioteca SMPL.
+
+      Para todos os efeitos consideramos o salto de tempo do SMPL como 1 unidade, então eventos acontecem na unidade 1, depois na unidade 2, etc...
+      Isso só não acontece nos envios de mensagem, que demoram 0.1 unidades de tempo para chegarem
+
+      Estamos também trabalhando no modelo de falhas Crash, uma vez que o processo falha ele não volta mais.
+
+      Além disso estamos trabalhando com o modelo de tempo síncrono, pois temos total clareza sobre o tempo de execução de uma ação usando o SMPL.
+    </p>
+
+  </section>
+
+  <!-- ESTRUTURA -->
+  <section class="section-divider">
+
+    <h2>2. Estrutura do Projeto</h2>
+
+    <ul>
+      <li>Implementação em linguagem C</li>
+      <li>Uso da biblioteca SMPL</li>
+      <li>Logs detalhados de execução</li>
+    </ul>
+
+<pre>
+ t1
+ ├── chang-roberts
+ │   ├── code
+ │   │   ├── chang-roberts.c
+ │   │   ├── makefile
+ │   │   ├── rand.c
+ │   │   ├── smpl.c
+ │   │   └── smpl.h
+ │   └── logs
+ │       ├── teste1.log.txt
+ │       ├── teste2.log.txt
+ │       ├── teste3.log.txt
+ │       └── teste4.log.txt
+ └── randomized-leader-election
+     ├── code
+     │   ├── makefile
+     │   ├── rand.c
+     │   ├── randomized_leader_election.c
+     │   ├── smpl.c
+     │   └── smpl.h
+     └── logs
+</pre>
+
+  </section>
+
+  <!-- ALGORITMO 1 -->
+  <section class="section-divider">
+
+    <h2>3. Algoritmo 1 — Eleição de Líder em Anel (Chang-Roberts)</h2>
+
+    <h3>3.1 Objetivo</h3>
+
+    <p>
+      Implementar o algoritmo de eleição de líder baseado
+      em Chang-Roberts utilizando uma topologia em anel.
+    </p>
+
+    <h3>3.2 Descrição do Algoritmo</h3>
+
+    <p>
+      Cada processo possui:
+    </p>
+
+    <ul>
+      <li>Identificador (pid) único entre 0 e N-1</li>
+      <li>Variável local <code>leader_id</code></li>
+      <li>Variáveis <code>msg</code> e <code>am_i_candidate</code></li>
+    </ul>
+
+	<p>
+	  Cada processo guarda quem ele acredita que é o líder, e a cada T quantidades de tempo ele manda uma mensagem para o processo seguinte no anel
+	  anunciando qual processo ele acredita que é o líder e se ele também é um candidato. Caso ele receba uma mensagem de outro processo e o ID recebido
+	  for maior que o ID do processo que ele acredita que é o líder, então ele passa a acreditar que o ID recebido é o ID do processo líder
+	  O Algoritmo acaba quando um processo X anuncia que é o líder para o processo (X+1) mod N, que percorre todo anel até chegar no processo (X-1) mod N
+	  Quando ele recebe o próprio ID do processo (X-1) mod N então todos acreditam que ele é o líder e o algoritmo acaba.
+	</p>
+    <h3>3.3 Decisões de Implementação</h3>
+
+    <ul>
+      <li>Envio de mensagens entre processos</li>
+      <li>Diferença entre identificador SMPL e pid</li>
+      <li>Contagem de mensagens trocadas</li>
+    </ul>
+
+	Como Enviar mensagens entre processos? Temos na struct de cada processo as variáveis <code>msg</code> e <code>am_i_candidate</code>. Quando um processo a testa um processo b correto
+	ele escreve nessas variáveis <code>msg</code> <code>am_i_candidate</code> do processo b e agenda um evento do tipo <code>RECEIVE</code> para o processo b 0.1 unidades de tempo depois
+	b por sua vez, quando trata o evento <code>RECEIVE</code> apenas lê esse buffer e processa os valores.
+
+	Por que criamos a variável <code>pid</code> além da variável <code>id</code>? Pois o identificador do SMPL não é necessariamente igual ao índice do processo
+	Durante o desenvolvimento tivemos alguns problemas de vários processos sendo eleitos. Isso acontecia pois o processo 0 poderia ter o id do SMPL 2 por exemplo. Então
+	apenas para manter uma consistência criamos essa variável
+
+	Para contarmos as mensagens trocadas temos uma variável global que é atualizada em todo evento <code>RECEIVE</code> tratado.
+    <h3>3.4 Estruturas de Dados</h3>
+
+<pre>
+typedef struct {
+    int id;                 // identificador de facility do SMPL
+    int pid;                // processId diferente do identificador do SMPL
+    bool bit;               // bit sorteado nessa rodada
+    int num_candidates;     // quantidade de processos que se candidataram nessa rodada
+    int id_ult_candidato;   // id do ultimo processo candidato recebido
+    Mensagem msg;           // buffer da mensagem recebida
+    int num_msgs_esperadas; // quantidade de mensagens que espera receber
+    int num_msgs_recebidas; // quantidade de mensagens que recebeu nessa rodada
+    bool *tested;           // processos que testou nessa rodada
+    State *states;          // crenca do processo a respeito dos estados dos demais
+} Processo;
+</pre>
+
+    <h3>3.5 Execução</h3>
+
+<pre>
+cd t1/chang-roberts/code
+
+make
+
+./lider NUMERO_DE_PROCESSOS
+</pre>
+
+    <h3>3.6 Código Fonte</h3>
+
+    <ul>
+      <li>
+        <a href="./t1/chang-roberts/chang-roberts.c.txt">
+          chang-roberts.c.txt
+        </a>
+      </li>
+    </ul>
+
+    <h3>3.7 Casos de Teste</h3>
+
+    <!-- TESTE 1 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 1 — Um único candidato</h4>
+
+        <ul>
+          <li>Número de processos: 5</li>
+          <li>Candidato inicial: Processo 0</li>
+          <li>Líder esperado: Processo 0</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: Processo 0</li>
+          <li>Total de mensagens: 25</li>
+          <li>Tempo SMPL: 5.1</li>
+        </ul>
+
+        <a href="./t1/chang-roberts/logs/teste1.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+    <!-- TESTE 2 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 2 — Candidatos aleatórios</h4>
+
+        <ul>
+          <li>Número de processos: 5</li>
+          <li>Candidatos: 0, 4</li>
+          <li>Líder esperado: Processo 4</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: Processo 4</li>
+          <li>Total de mensagens: 24</li>
+          <li>Tempo SMPL: 5.1</li>
+        </ul>
+
+        <a href="./t1/chang-roberts/logs/teste2.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+    <!-- TESTE 3 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 3 — Todos os processos candidatos</h4>
+
+        <ul>
+          <li>Número de processos: 5</li>
+          <li>Candidatos: 0, 1, 2, 3, 4</li>
+          <li>Líder esperado: Processo 4</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: Processo 4</li>
+          <li>Total de mensagens: 24</li>
+          <li>Tempo SMPL: 5.1</li>
+        </ul>
+
+        <a href="./t1/chang-roberts/logs/teste3.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+	<!-- TESTE 4 -->
+	<div class="card mb-4">
+		<div class="card-body">
+		    <h4>Teste 4 — Apenas 1 candidato com falhas aleatórias</h4>
+		        <ul>
+		            <li>Número de processos: 5</li>
+	                <li>Candidatos: 0</li>
+		            <li>Líder esperado: Processo 0</li>
+		           </ul>
+		           <h5>Resultados</h5>
+		           <ul>
+		            <li>Líder eleito: Processo 0</li>
+	                <li>Total de mensagens: 9</li>
+	                <li>Tempo SMPL: 3.1</li>
+		           </ul>
+           <a href="./t1/chang-roberts/logs/teste4.log.txt">
+             Log completo
+           </a>
+		</div>
+	</div>
+	
+
+  </section>
+
+  <!-- ALGORITMO 2 -->
+  <section class="section-divider">
+
+    <h2>4. Algoritmo 2 — Randomized Leader Election Algorithm</h2>
+
+    <h3>4.1 Objetivo</h3>
+
+    <p>
+      Implementar o algoritmo aleatorizado de eleição
+      de líder baseado em Vring.
+    </p>
+
+    <h3>4.2 Descrição do Algoritmo</h3>
+
+    <p>
+      O algoritmo funciona em rodadas. Na primeira rodada y < N processos sorteiam o bit um e a cada rodada menos e menos processos permanecem
+      com o bit 1 até sobrar um único processo: o líder
+    </p>
+
+    <p>
+      Em cada rodada, os processos candidatos sorteiam
+      um valor aleatório para um bit.
+    </p>
+
+    <ul>
+      <li>Processos com bit = 1 permanecem candidatos</li>
+      <li>Processos com bit = 0 deixam de ser candidatos</li>
+      <li>Mensagens circulam ao redor do anel</li>
+      <li>O algoritmo termina quando resta apenas um processo com bit = 1</li>
+    </ul>
+
+    <h3>4.3 Decisões de Implementação</h3>
+
+    <ul>
+      <li>
+      	Execução baseada em rodadas: Como saber quando uma rodada acaba? Da mesma maneira que no Chang-Roberts, a virada de chave acontece quando um processo recebe
+		a mensagem que ele mesmo mandou. Isso só é possível nesse algoritmo pois criamos o buffer <code>msg_to_send</code> em cada processo. Essa variável tem a seguinte utilidade:
+		se um processo é candidato (bit 1) ele manda as suas informações para frente. Caso ele já tenha mandado a sua mensagem pra frente, ele deve repassar as mensagens que recebe para frente, e isso é feito usando esse buffer
+		Os processos não candidatos (bit 0) apenas repassam mensagens pra frente, também usando o buffer. Para saber se um processo já enviou as suas informações em caso de candidato (bit 1) usamos a variável <code>sent</code>
+		Se o valor dela é negativo, os valores enviados são do próprio processo, caso contrário ele apenas repassa mensagens para frente, independente do que for.
+      </li>
+      <li>
+      	Condição de parada:
+		O ciclo de enviar/repassar mensagens acaba quando um processo recebe uma mensagem com o seu próprio <code>sender_id</code>. Isso só pode significar que a mensagem que ele enviou deu toda a volta no anel,
+		portanto todos os demais processos sabem que ele é um candidato.
+      </li>
+	  <p>A imagem a seguir mostra um diagrama da execução do algoritmo em rodadas assumindo 4 processos (0..3) e apenas o processo 0 como candidato</p>
+      <img
+		src="./assets/diagrama_randomized.png"
+		height=260
+		width=1080
+      />
+    </ul>
+
+    <h3>4.4 Estruturas de Dados</h3>
+<pre>
+typedef enum {
+    CANDIDATE = 1,
+    NOT_CANDIDATE = 0,
+} Decision;
+
+typedef struct {
+    int sender_id;
+    int bit;
+} Mensagem;
+
+typedef struct {
+    int id;                            // identificador de facility do SMPL
+    int pid;                           // processId diferente do identificador do SMPL
+    bool bit;                          // bit sorteado nessa rodada
+    bool sent;                         // indica se naquela rodada ele ja mandou seu bit ou se deve so repassar o que esta no buffer
+    Mensagem msg;                      // buffer da mensagem recebida
+    Mensagem msg_to_send;              // buffer de mensagens a enviar
+    Decision *decisions;               // vetor que guarda quais processos p acredita serem candidatos
+    bool *tested;                      // processos que testou nessa rodada
+    State *states;                     // crenca do processo a respeito dos estados dos demais
+} Processo;
+</pre>
+
+    <h3>4.5 Execução</h3>
+
+<pre>
+cd t1/randomized-leader-election/code
+
+make
+
+./lider NUMERO_DE_PROCESSOS
+</pre>
+
+    <h3>4.6 Código Fonte</h3>
+
+    <ul>
+      <li>
+        <a href="./t1/randomized-leader-election/code/randomized_leader_election.c.txt">
+          randomized_leader_election.c.txt
+        </a>
+      </li>
+    </ul>
+
+    <h3>4.7 Casos de Teste</h3>
+
+    <!-- TESTE 1 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 1 — ???</h4>
+
+        <ul>
+          <li>Número de processos: A FAZER</li>
+          <li>Rodadas executadas: A FAZER</li>
+          <li>Líder esperado: A FAZER</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: A FAZER</li>
+          <li>Total de mensagens: A FAZER</li>
+          <li>Tempo SMPL: A FAZER</li>
+        </ul>
+
+        <a href="./t1/randomized-leader-election/logs/teste1.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+    <!-- TESTE 2 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 2 — ???</h4>
+
+        <ul>
+          <li>Número de processos:A FAZER</li>
+          <li>Rodadas executadas: A FAZER</li>
+          <li>Líder esperado: A FAZER</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: A FAZER</li>
+          <li>Total de mensagens: A FAZER</li>
+          <li>Tempo SMPL: A FAZER</li>
+        </ul>
+
+        <a href="./t1/randomized-leader-election/logs/teste2.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+    <!-- TESTE 3 -->
+    <div class="card mb-4">
+      <div class="card-body">
+
+        <h4>Teste 3 — ???</h4>
+
+        <ul>
+          <li>Número de processos: A FAZER</li>
+          <li>Rodadas executadas: A FAZER</li>
+          <li>Líder esperado: A FAZER</li>
+        </ul>
+
+        <h5>Resultados</h5>
+
+        <ul>
+          <li>Líder eleito: A FAZER</li>
+          <li>Total de mensagens: A FAZER</li>
+          <li>Tempo SMPL: A FAZER</li>
+        </ul>
+
+        <a href="./t1/randomized-leader-election/logs/teste3.log.txt">
+          Log completo
+        </a>
+
+      </div>
+    </div>
+
+  </section>
+
+  <!-- CONCLUSÃO -->
+  <section class="section-divider">
+
+    <h2>5. Conclusão</h2>
+    <p>
+    	No geral percebemos a dificuldade de escrever um algoritmo em um sistema distribuído, pois os problemas que aparecem, como por exemplo entender as condições de parada, o que acontece quando um processo falha bem em um instante crítico
+    	como fazer todos os processos saberem sobre todos os processo entre outros não são simples de resolver.
+    </p>
+  </section>
+
+  <!-- RODAPÉ -->
+  <footer class="text-center mt-5 mb-4 text-muted">
+    Sistemas Distribuídos - UFPR - 2026
+  </footer>
+
+</body>
+
+</html>
