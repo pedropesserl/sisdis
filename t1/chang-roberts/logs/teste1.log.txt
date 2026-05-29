@@ -1,0 +1,110 @@
+---------------------------- teste: apenas um candidato -----------------------------------
+Os candidatos a lider sao: [  0]
+[ 1.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: []
+       O processo 0 enviou uma mensagem com o id 0 para o processo 1
+       Vetor de estados do processo 0: [ C C U U U ]
+[ 1.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: []
+       O processo 1 enviou uma mensagem com o id -1 para o processo 2
+       Vetor de estados do processo 1: [ U C C U U ]
+[ 1.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: []
+       O processo 2 enviou uma mensagem com o id -1 para o processo 3
+       Vetor de estados do processo 2: [ U U C C U ]
+[ 1.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: []
+       O processo 3 enviou uma mensagem com o id -1 para o processo 4
+       Vetor de estados do processo 3: [ U U U C C ]
+[ 1.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1 ]
+       O processo 4 enviou uma mensagem com o id -1 para o processo 0
+       Vetor de estados do processo 4: [ C C U U C ]
+[ 1.1] O processo 1 recebeu uma mensagem com id: 0 com am_i_candidate: 1
+[ 1.1] O processo 2 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 1.1] O processo 3 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 1.1] O processo 4 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 1.1] O processo 0 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 2.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: [ 2 ]
+       O processo 0 enviou uma mensagem com o id 0 para o processo 1
+       Vetor de estados do processo 0: [ C C C U U ]
+[ 2.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 3 ]
+       O processo 1 enviou uma mensagem com o id 0 para o processo 2
+       Vetor de estados do processo 1: [ U C C C U ]
+[ 2.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 4 ]
+       O processo 2 enviou uma mensagem com o id -1 para o processo 3
+       Vetor de estados do processo 2: [ U U C C C ]
+[ 2.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1 ]
+       O processo 3 enviou uma mensagem com o id -1 para o processo 4
+       Vetor de estados do processo 3: [ C C U C C ]
+[ 2.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1  2 ]
+       O processo 4 enviou uma mensagem com o id -1 para o processo 0
+       Vetor de estados do processo 4: [ C C C U C ]
+[ 2.1] O processo 1 recebeu uma mensagem com id: 0 com am_i_candidate: 1
+[ 2.1] O processo 2 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 2.1] O processo 3 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 2.1] O processo 4 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 2.1] O processo 0 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 3.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 0 enviou uma mensagem com o id 0 para o processo 1
+       Vetor de estados do processo 0: [ C C C C U ]
+[ 3.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 3  4 ]
+       O processo 1 enviou uma mensagem com o id 0 para o processo 2
+       Vetor de estados do processo 1: [ U C C C C ]
+[ 3.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 enviou uma mensagem com o id 0 para o processo 3
+       Vetor de estados do processo 2: [ C C C C C ]
+[ 3.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 enviou uma mensagem com o id -1 para o processo 4
+       Vetor de estados do processo 3: [ C C C C C ]
+[ 3.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1  2  3 ]
+       O processo 4 enviou uma mensagem com o id -1 para o processo 0
+       Vetor de estados do processo 4: [ C C C C C ]
+[ 3.1] O processo 1 recebeu uma mensagem com id: 0 com am_i_candidate: 1
+[ 3.1] O processo 2 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 3.1] O processo 3 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 3.1] O processo 4 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 3.1] O processo 0 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 4.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: [ 2  3  4 ]
+       O processo 0 enviou uma mensagem com o id 0 para o processo 1
+       Vetor de estados do processo 0: [ C C C C C ]
+[ 4.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 enviou uma mensagem com o id 0 para o processo 2
+       Vetor de estados do processo 1: [ C C C C C ]
+[ 4.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 enviou uma mensagem com o id 0 para o processo 3
+       Vetor de estados do processo 2: [ C C C C C ]
+[ 4.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 enviou uma mensagem com o id 0 para o processo 4
+       Vetor de estados do processo 3: [ C C C C C ]
+[ 4.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1  2  3 ]
+       O processo 4 enviou uma mensagem com o id -1 para o processo 0
+       Vetor de estados do processo 4: [ C C C C C ]
+[ 4.1] O processo 1 recebeu uma mensagem com id: 0 com am_i_candidate: 1
+[ 4.1] O processo 2 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 4.1] O processo 3 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 4.1] O processo 4 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 4.1] O processo 0 recebeu uma mensagem com id: -1 com am_i_candidate: 0
+[ 5.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: [ 2  3  4 ]
+       O processo 0 enviou uma mensagem com o id 0 para o processo 1
+       Vetor de estados do processo 0: [ C C C C C ]
+[ 5.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 enviou uma mensagem com o id 0 para o processo 2
+       Vetor de estados do processo 1: [ C C C C C ]
+[ 5.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 enviou uma mensagem com o id 0 para o processo 3
+       Vetor de estados do processo 2: [ C C C C C ]
+[ 5.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 enviou uma mensagem com o id 0 para o processo 4
+       Vetor de estados do processo 3: [ C C C C C ]
+[ 5.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1  2  3 ]
+       O processo 4 enviou uma mensagem com o id 0 para o processo 0
+       Vetor de estados do processo 4: [ C C C C C ]
+[ 5.1] O processo 1 recebeu uma mensagem com id: 0 com am_i_candidate: 1
+[ 5.1] O processo 2 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 5.1] O processo 3 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 5.1] O processo 4 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 5.1] O processo 0 recebeu uma mensagem com id: 0 com am_i_candidate: 0
+[ 5.1] O processo 0 foi eleito o lider do sistema
+FIM DO ALGORITMO (tempo:  5.1).
+O processo 0 acredita que o processo 0 eh o lider
+O processo 1 acredita que o processo 0 eh o lider
+O processo 2 acredita que o processo 0 eh o lider
+O processo 3 acredita que o processo 0 eh o lider
+O processo 4 acredita que o processo 0 eh o lider
+Total de mensagens transmitidas na execucao do algoritmo: 25

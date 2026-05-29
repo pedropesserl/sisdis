@@ -1,0 +1,1 @@
+Fazer o "melhor caso do algoritmo" testar a partir do 9
