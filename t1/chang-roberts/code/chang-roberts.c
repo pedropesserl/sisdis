@@ -1,5 +1,5 @@
 // Autores: Pedro Folloni Pesserl GRR20220072 && Eduardo Faria Kruger GRR20232329
-// Data ultima modificacao: 28/05/2026
+// Data ultima modificacao: 29/05/2026
 // Funcionalidade: Implementacao do algoritmo de eleicao de lider Chang-Roberts
 
 #include <assert.h>
@@ -10,8 +10,7 @@
 
 #define TEST     1
 #define FAULT    2
-#define RECOVERY 3
-#define RECEIVE  4
+#define RECEIVE  3
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -196,12 +195,6 @@ void simula(int N, int max_unidades_tempo) {
                 printf("[%4.1f] O processo %d falhou\n", time(), token);
                 break;
 
-            case RECOVERY:
-                release(p->id, token);
-                printf("[%4.1f] O processo %d recuperou\n", time(), token);
-                schedule(TEST, 1.0, token);
-                break;
-                
             case RECEIVE:
                 total_mensagens++;
                 printf("[%4.1f] O processo %d recebeu uma mensagem com id: %d com am_i_candidate: %d\n", time(), p->pid, p->msg, p->am_i_candidate);
