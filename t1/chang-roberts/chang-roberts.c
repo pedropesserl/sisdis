@@ -146,6 +146,15 @@ void simula(int N, int max_unidades_tempo) {
                 }
                 if (prox == token) {
                     printf("[%4.1f] O processo %d testou todos os demais processos suspeitos\n", time(), token);
+                    
+                    //envia_mensagem
+                    processos[prox].msg = p->leader_id;
+                    processos[prox].am_i_candidate = p->pid == p->leader_id;
+                    schedule(RECEIVE, 0.1, prox); //agenda um evento para si mesmo, apenas cai no caso que já tinhamos tratado
+                    printf("       O processo %d enviou uma mensagem com o id %d para o processo %d\n", token, p->leader_id, prox);
+                    //fim_envia_mensagem
+
+                    
                 } else {
                     p->states[prox] = CORRETO;
                     p->tested[prox] = true;
@@ -230,7 +239,7 @@ int main(int argc, char **argv) {
 
     int N = atoi(argv[1]); // numero de processos do sistema distribuido
 
-    int MaxTempoSimulac = 100;
+    int MaxTempoSimulac = 120;
 
     processos = malloc(sizeof(Processo) * N);
     assert(processos != NULL);
