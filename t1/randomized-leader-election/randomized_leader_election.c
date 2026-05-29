@@ -1,6 +1,13 @@
 // Autores: Pedro Folloni Pesserl GRR20220072 && Eduardo Faria Kruger GRR20232329
 // Data ultima modificacao: 22/05/2026
-// Funcionalidade: Implementação do algoritmo de eleicao de lider Chang-Roberts
+// Funcionalidade: Implementacao do algoritmo aleatorizado de eleicao de lider
+
+// 1. Todos os processos sorteiam 1 bit
+// 2. Repete ate ter um lider
+//      2.1. Envia o bit atraves do anel
+//              2.1.1. cada processo precisa receber mensagens de todos os outros
+//      2.2. Se so tiver 1 bit 1, o processo que enviou e o lider
+//      2.3. Senao, quem tem bit 1 sorteia de novo
 
 // lista
 // passo 1 : variavel local com o id do lider
@@ -19,8 +26,7 @@
 #define TEST     1
 #define FAULT    2
 #define RECOVERY 3
-#define SEND 4
-#define RECEIVE 5
+#define RECEIVE  4
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
@@ -30,65 +36,59 @@ typedef enum {
     FALHO   = 1,
 } State;
 
-candidates {
-  id: bit
-}
+typedef struct {
+    int sender_id;
+    int bit;
+} Mensagem;
 
 typedef struct {
-    int id;           // identificador de facility do SMPL
-    int pid;
-    int bit;
-
-    int num_candidates;
-
-    int msg;          // buffer da mensagem recebida
-    bool *tested;     // processos que testou nessa rodada
-    State *states;    // crenca do processo a respeito dos estados dos demais
+    int id;                 // identificador de facility do SMPL
+    int pid;                // processId diferente do identificador do SMPL
+    bool bit;               // bit sorteado nessa rodada
+    int num_candidates;     // quantidade de processos que se candidataram nessa rodada
+    int id_ult_candidato;   // id do ultimo processo candidato recebido
+    Mensagem msg;           // buffer da mensagem recebida
+    int num_msgs_esperadas; // quantidade de mensagens que espera receber
+    int num_msgs_recebidas; // quantidade de mensagens que recebeu nessa rodada
+    bool *tested;           // processos que testou nessa rodada
+    State *states;          // crenca do processo a respeito dos estados dos demais
 } Processo;
 
 Processo *processos;
 
-void insere_ordenado(int vetor[], int *tam, int valor)
-{
-  int i = 0;
-  while(i < *tam && vetor[i] < valor)
-  {
-    i++;
-  }
-  if(valor == vetor[i])
-  {
-    return;
-  }
-  for(int j = *tam; j > i; j--)
-  {
-    vetor[j] = vetor[j-1];
-  }
-  vetor[i] = valor;
-  (*tam)++;
-} //fim void
+/* void insere_ordenado(int vetor[], int *tam, int valor) */
+/* { */
+/*   int i = 0; */
+/*   while(i < *tam && vetor[i] < valor) */
+/*   { */
+/*     i++; */
+/*   } */
+/*   if(valor == vetor[i]) */
+/*   { */
+/*     return; */
+/*   } */
+/*   for(int j = *tam; j > i; j--) */
+/*   { */
+/*     vetor[j] = vetor[j-1]; */
+/*   } */
+/*   vetor[i] = valor; */
+/*   (*tam)++; */
+/* } //fim void */
 
-int esta_no_vetor(int vetor[], int *tam, int valor)
-{
-  for(int i = 0; i < *tam; i++)
-  {
-    if(vetor[i] == valor)
-    {
-      return 1;
-    }
-  }
-  return 0;
-} //fim int
-
-//escolhe apenas um candidato, sendo ele o processo 0
-void sort_single_candidate(int N) {
-    for (int i = 0; i < N; i++) {
-        processos[i].leader_id = -1;
-    }
-    processos[0].leader_id = 0;
-}
+/* int esta_no_vetor(int vetor[], int *tam, int valor) */
+/* { */
+/*   for(int i = 0; i < *tam; i++) */
+/*   { */
+/*     if(vetor[i] == valor) */
+/*     { */
+/*       return 1; */
+/*     } */
+/*   } */
+/*   return 0; */
+/* } //fim int */
 
 void print_candidates(int N) {
-    printf("Os candidatos a líder são: [");
+    printf("Os candidatos a lider sao: [");
     for (int i = 0; i < N; i++) {
         if (processos[i].bit == 1) {
             printf(" %2d", i);
@@ -98,7 +98,7 @@ void print_candidates(int N) {
 }
 
 void init_simulacao(int N, char fa_name[5]) {
-    smpl(0, "Eleicao de lider: Algoritmo randomizado");
+    smpl(0, "Eleicao de lider: Algoritmo aleatorizado");
     reset();
     stream(1);
 
@@ -107,12 +107,10 @@ void init_simulacao(int N, char fa_name[5]) {
         processos[i].num_candidates = 0;
         processos[i].id = 0;
         processos[i].bit = randomic(0, 1);
-        processos[i].msg = -1;
-        if(processos[i].bit == 1)
-        {
-          printf("prova de que tá inserindo alguma coisa memo");
-          insere_ordenado(processos[i].candidates, &(processos[i].num_candidates), i);
-        }
+        processos[i].msg = (Mensagem){ .sender_id = -1, .bit = -1 };
+        processos[i].num_msgs_esperadas = N;
+        processos[i].num_msgs_recebidas = 0;
+        processos[i].id_ult_candidato = -1;
     }
     for (int i = 0; i < N; i++) {
         memset(fa_name, '\0', 5);
@@ -125,19 +123,17 @@ void init_simulacao(int N, char fa_name[5]) {
         processos[i].pid = i;
         processos[i].states[i] = CORRETO;
         processos[i].tested[i] = true;
-        processos[i].leader_id = -1;
     }
+
+    print_candidates(N);
 }
 
-//inicia os eventos iniciais onde ninguem falha em nenhum momento
 void escalona_sem_falhas(int N) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 1.0, i);
     }
 }
 
-
-//todo processo tem uma chance de 50% de falhar
 void escalona_rand(int N) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 1.0, i);
@@ -149,7 +145,6 @@ void escalona_rand(int N) {
     }
 }
 
-//todos falham
 void escalona_falhas(int N) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 1.0, i);
@@ -181,33 +176,38 @@ void simula(int N, int max_unidades_tempo) {
                 if (prox == token) {
                     printf("[%4.1f] O processo %d testou todos os demais processos suspeitos\n", time(), token);
                 } else {
-                    printf("[%4.1f] O processo %d testou o processo %d correto\n", time(), token, prox);
                     p->states[prox] = CORRETO;
                     p->tested[prox] = true;
-                    printf("       obteve informacao sobre: [");
+                    printf("[%4.1f] O processo %d testou o processo %d correto e obteve informacao sobre: [", time(), token, prox);
                     for (int i = 0; i < N; i++) {
                         if (!p->tested[i] && processos[prox].states[i] != UNKNOWN) {
                             p->states[i] = processos[prox].states[i];
                             printf("%2d ", i);
                         }
                     }
-                     printf("]\n");
+                    printf("]\n");
 
-
-                    // envia_mensagem se ja nao for lider
-                    processos[prox].msg = p->leader_id;
+                    processos[prox].msg = (Mensagem){ .sender_id = p->pid, .bit = p->bit };
                     schedule(RECEIVE, 0.1, prox);
-                    printf("       O processo %d enviou uma mensagem com o id %d para o processo %d\n", token, p->leader_id, prox);
-                    // fim_envia_mensagem
+                    printf("       O processo %d enviou a mensagem {bit: %d, pid: %d} para o processo %d\n", p->pid, p->bit, p->pid, prox);
                 }
-                printf("       O que o processo %d sabe sobre todos os processos: [ ", token);
+                printf("       Vetor de estados do processo %d: [ ", token);
                 for (int i = 0; i < N; i++) {
-                    printf("%2d ", (int)p->states[i]);
+                    switch (p->states[i]) {
+                        case UNKNOWN:
+                            printf("U ");
+                            break;
+                        case CORRETO:
+                            printf("C ");
+                            break;
+                        case FALHO:
+                            printf("S "); // suspeito
+                    }
                 }
                 printf("]\n");
-                printf("       O buffer de mensagem de %d eh::: msg: %d \n\n", token, p->msg);
-                schedule(TEST, 1.0, token);
+                /* schedule(TEST, 1.0, token); */
                 break;
+
             case FAULT:
                 request(p->id, token, 0);
                 printf("[%4.1f] O processo %d falhou\n", time(), token);
@@ -219,22 +219,60 @@ void simula(int N, int max_unidades_tempo) {
                 schedule(TEST, 1.0, token);
                 break;
                 
-            //diferente do caso SEND, o RECEIVE eh um evento que deve ser tratado
             case RECEIVE:
-                printf("o processo d recebeu a mensagem");
-                break;
+                p->num_msgs_recebidas++;
+                printf("[%4.1f] O processo %d recebeu a mensagem {bit: %d, pid: %d}\n", time(), p->pid, p->msg.bit, p->msg.sender_id);
+                if (p->msg.sender_id != p->pid) { // nao eh a minha propria mensagem
+                    // encaminhar mensagem
+                    int prox = (token + 1) % N; // TODO: o que fazer se o proximo estiver falho?
+                                                // tipo: da pra botar a mesma logica do TEST pra descobrir o proximo processo correto, mas ai o TEST existe justamente pra isso. so que nao da pra dar um schedule(TEST) aqui pq ele vai mandar a mensagem errada. ou seja ou repete tudo aqui ou sei la faz um evento diferente nao sei
 
+                    // isso aqui ta errado. por exemplo: o processo 1 recebe uma mensagem do 0 e o 2 recebe do 1;
+                    // mas o 1 encaminha pro 2 antes do 2 ter tempo de ler a mensagem que ele recebeu do 0;
+                    // entao o 2 nunca le a mensagem do 0 e da tudo errado.
+                    processos[prox].msg = p->msg;
+                    schedule(RECEIVE, 0.1, prox);
+                    printf("       O processo %d encaminhou a mensagem {bit: %d, pid: %d} para o processo %d\n", p->pid, p->msg.bit, p->msg.sender_id, prox);
+                }
+                if (p->msg.bit) {
+                    p->num_candidates++;
+                    p->id_ult_candidato = p->msg.sender_id;
+                }
+                printf("PROCESSO %d: num_msgs_recebidas = %d, num_msgs_esperadas = %d, num_candidates = %d\n", p->pid, p->num_msgs_recebidas, p->num_msgs_esperadas, p->num_candidates);
+                if (p->num_msgs_recebidas == p->num_msgs_esperadas) { // acabou a rodada
+                    if (p->num_candidates == 1) { // lider eleito
+                        printf("[%4.1f] O processo %d elegeu o processo %d como lider\n", time(), p->pid, p->id_ult_candidato);
+                        break;
+                    } else { // proxima rodada
+                        p->num_msgs_recebidas = 0;
+                        p->id_ult_candidato = -1;
+                        if (p->num_candidates == 0) { // deu errado
+                            printf("PROCESSO %d DIZ: DEU ERRADO\n", p->pid);
+                            /* p->num_msgs_esperadas = N; */
+                            /* for (int i = 0; i < N; i++) { */
+                            /*     processos[i].bit = randomic(0, 1); */
+                            /*     schedule(TEST, 1.0, i); */
+                            /* } */
+                        } else {
+                            p->num_msgs_esperadas = p->num_candidates;
+                            p->num_candidates = 0;
+                            if (p->bit) { // era candidato
+                                p->bit = randomic(0, 1);
+                                schedule(TEST, 1.0, p->pid);
+                            }
+                        }
+                        print_candidates(N);
+                    }
+                }
+                break;
             
             default:
-                printf("fim da rodada %d\n\n", num_rodada);
-                num_rodada++;
                 break;
-        } //fim_switch
-    } //fim_while
-} //fim_simula
+        }
+    }
+}
 
-
-//funcao main, inicia toda a simulacao e aloca os processos, bem como executa o algoritmo em si
+//funcao main, inicia toda a simulacao e aloca os processos, e executa o algoritmo
 int main(int argc, char **argv) {
     char fa_name[5]; // facility name
 
@@ -254,25 +292,10 @@ int main(int argc, char **argv) {
         assert(processos[i].states != NULL);
         processos[i].tested = malloc(sizeof(bool) * N);
         assert(processos[i].tested != NULL);
-        processos[i].candidates = malloc(sizeof(int) * N);
-        assert(processos[i].candidates != NULL);
     }
 
     printf("--------------------- teste: sem falhas -------------------\n");
     init_simulacao(N, fa_name);
-    sort_single_candidate(N);
-
-    for(int i = 0; i < N; i ++)
-    {
-      printf("ID do processo %d : %d \n", i, processos[i].pid);
-      printf("bit do processo %d: %d \n", i, processos[i].bit);
-      printf("       Quais procesos %d acha que sao candidatos: [ ", i);
-      for (int j = 0; j < processos[i].num_candidates; j++) {
-          printf("%d ", processos[i].candidates[j]);
-      }
-      printf("]\n");
-    }
-    print_candidates(N);
     escalona_sem_falhas(N);
     simula(N, MaxTempoSimulac);
 
