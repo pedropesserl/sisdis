@@ -1,7 +1,8 @@
-w/* 
-  programa: tempo.x
-  Finalidade: aprender a programar a simuçação de algoritmos distribuídos 
-  Data 02/04/2026
+/* 
+  Autor: Eduardo Faria Kruger GRR20232329
+  programa: tempo0.c
+  Finalidade: aprender a programar a simuçação de algoritmos distribuídos pela aula gravada de sistemas distribuídos 
+  Data da última alteração02/04/2026
 */
 
 #include <stdio.h>

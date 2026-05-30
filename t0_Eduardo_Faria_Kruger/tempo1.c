@@ -1,7 +1,8 @@
 /*
+  Autor: Eduardo Faria Kruger GRR20232329
   programa: tempo1.c
-  Finalidade: aprender a programar a simuçação de algoritmos distribuídos 
-  Data 02/04/2026
+  Finalidade: Fazer cada processo testar o próximo no anel
+  Data da última modificação 30/05/2026
 */
 
 #include <stdio.h>
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
 {
   static int N, //número de processos do sistema distribuído
              token, //indica o processo que está executando
-             event, r, i, next,
+             event, i, next,
              MaxTempoSimulac = 120;
   static char fa_name[5];
 
@@ -78,7 +79,11 @@ int main(int argc, char *argv[])
           break; //processo falho não testa
         }
         printf("Sou o processo %d estou testando no tempo %4.1f\n", token, time());
+
+        //endereço do próximo processo no anel
         next = (token+1) % N;
+
+        //Eh nesse while que o teste de fato acontece
         while(status(processo[next].id) != 0)
         {
           printf("      O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, next, time());
@@ -94,6 +99,7 @@ int main(int argc, char *argv[])
         }
         schedule(test, 30.0, token);
         break;
+      
       case fault:
         r = request(processo[token].id, token, 0);
         printf("O processo %d falhou no tempo %4.1f\n", token, time());

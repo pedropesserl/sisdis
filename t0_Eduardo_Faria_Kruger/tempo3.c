@@ -1,7 +1,7 @@
 /*begin
-  programa: tempo1.c
-  Finalidade: aprender a programar a simuçação de algoritmos distribuídos 
-  Data 20/05/2026
+  programa: tempo3.c
+  Finalidade: Fazer com que cada processo guarde o vetor state, que possui as informações sobre os estados de todos os processos do sistema distribuído 
+  Data da última modificação: 30/05/2026
 */
 
 #include <stdio.h>
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
         next = (token+1) % N;
         while(status(processos[next].id) != 0)
         {
-          printf("             O processo %d testou o processo %d suspeito no tempo %4.1f\n", time(), token, next, time());
+          printf("             O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, next, time());
           processos[token].state[next] = FAILED;
           printStateVector(&processos, N, token, 13); //imprime com padding de 13 pra facilitar na leitura dos logs, vai tudo ficar identado
           next = (next + 1) % N;
