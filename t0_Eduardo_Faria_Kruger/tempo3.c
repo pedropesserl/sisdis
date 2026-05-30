@@ -1,4 +1,5 @@
 /*
+  Autor: Eduardo Faria Kruger GRR20232329
   programa: tempo3.c
   Finalidade: Fazer com que cada processo guarde o vetor state, que possui as informações sobre os estados de todos os processos do sistema distribuído 
   Data da última modificação: 30/05/2026

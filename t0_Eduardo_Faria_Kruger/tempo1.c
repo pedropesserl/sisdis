@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     schedule(test, 90, i); //todos que tinham falhado voltam a testar
   }
   
-  printf("------------------------------tempo1.c-------------------------------------------------\n");
+  printf("------------------------------tempo1.c-----------------------------\n");
   //agora vem o loop processo principal do simulador
   while (time() < MaxTempoSimulac)
   {

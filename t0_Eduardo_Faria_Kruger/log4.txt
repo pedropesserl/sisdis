@@ -1,4 +1,4 @@
--------------------------------------------tempo4.c---------------------------------------
+------------------------------tempo4.c-----------------------------
 Vetor State do processo 0: C U U 
 Vetor State do processo 1: U C U 
 Vetor State do processo 2: U U C 

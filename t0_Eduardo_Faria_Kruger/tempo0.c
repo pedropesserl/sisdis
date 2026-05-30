@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
   {
     schedule(test, 30.0, i); //todos os processos de 0 até N-1 vão testar na unidade de tempo 30
   }
-  
+  printf("------------------------------tempo0.c-----------------------------\n");  
   //agora vem o loop processo principal do simulador
 
   while (time() < MaxTempoSimulac)

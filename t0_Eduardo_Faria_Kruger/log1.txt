@@ -1,4 +1,4 @@
-------------------------------tempo1.c-------------------------------------------------
+------------------------------tempo1.c-----------------------------
 [30.0] Sou o processo 0 estou testando
        O processo 0 testou o processo 1 correto 
 [30.0] Sou o processo 1 estou testando
