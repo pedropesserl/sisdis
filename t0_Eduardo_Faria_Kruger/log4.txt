@@ -1,0 +1,54 @@
+-------------------------------------------tempo4.c---------------------------------------
+Vetor State do processo 0: C U U 
+Vetor State do processo 1: U C U 
+Vetor State do processo 2: U U C 
+[30.0] Sou o processo 0 estou testando no tempo 30.0
+       O processo 0 testou o processo 1 correto
+       Vetor State do processo 0: C C U 
+[30.0] Sou o processo 1 estou testando no tempo 30.0
+       O processo 1 testou o processo 2 correto
+       Vetor State do processo 1: U C C 
+[30.0] Sou o processo 2 estou testando no tempo 30.0
+       O processo 2 testou o processo 0 correto
+       Vetor State do processo 2: C C C 
+[45.0] O processo 1 falhou no tempo 45.0
+[45.0] O processo 2 falhou no tempo 45.0
+[60.0] Sou o processo 0 estou testando no tempo 60.0
+       O processo 0 testou o processo 1 suspeito no tempo 60.0
+       Vetor State do processo 0: C F U 
+       O processo 0 testou o processo 2 suspeito no tempo 60.0
+       Vetor State do processo 0: C F F 
+       O processo 0 testou todos suspeitos e se testou correto
+       Vetor State do processo 0: C F F 
+[75.0] O processo 1 recuperou no tempo 75.0
+[75.0] O processo 2 recuperou no tempo 75.0
+[90.0] Sou o processo 1 estou testando no tempo 90.0
+       O processo 1 testou o processo 2 correto
+       Vetor State do processo 1: C C C 
+[90.0] Sou o processo 2 estou testando no tempo 90.0
+       O processo 2 testou o processo 0 correto
+       Vetor State do processo 2: C F C 
+[90.0] Sou o processo 0 estou testando no tempo 90.0
+       O processo 0 testou o processo 1 correto
+       Vetor State do processo 0: C C C 
+[120.0] Sou o processo 1 estou testando no tempo 120.0
+       O processo 1 testou o processo 2 correto
+       Vetor State do processo 1: C C C 
+[120.0] Sou o processo 2 estou testando no tempo 120.0
+       O processo 2 testou o processo 0 correto
+       Vetor State do processo 2: C C C 
+[120.0] Sou o processo 0 estou testando no tempo 120.0
+       O processo 0 testou o processo 1 correto
+       Vetor State do processo 0: C C C 
+[150.0] Sou o processo 1 estou testando no tempo 150.0
+       O processo 1 testou o processo 2 correto
+       Vetor State do processo 1: C C C 
+[150.0] Sou o processo 2 estou testando no tempo 150.0
+       O processo 2 testou o processo 0 correto
+       Vetor State do processo 2: C C C 
+[150.0] Sou o processo 0 estou testando no tempo 150.0
+       O processo 0 testou o processo 1 correto
+       Vetor State do processo 0: C C C 
+[180.0] Sou o processo 1 estou testando no tempo 180.0
+       O processo 1 testou o processo 2 correto
+       Vetor State do processo 1: C C C 

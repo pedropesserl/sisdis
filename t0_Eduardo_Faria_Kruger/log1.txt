@@ -1,0 +1,33 @@
+------------------------------tempo1.c-------------------------------------------------
+[30.0] Sou o processo 0 estou testando
+       O processo 0 testou o processo 1 correto 
+[30.0] Sou o processo 1 estou testando
+       O processo 1 testou o processo 2 correto 
+[30.0] Sou o processo 2 estou testando
+       O processo 2 testou o processo 0 correto 
+[45.0] O processo 1 falhou
+[45.0] O processo 2 falhou
+[60.0] Sou o processo 0 estou testando
+       O processo 0 testou o processo 1 suspeito
+[75.0] O processo 1 recuperou
+[75.0] O processo 2 recuperou
+[90.0] Sou o processo 1 estou testando
+       O processo 1 testou o processo 2 correto 
+[90.0] Sou o processo 2 estou testando
+       O processo 2 testou o processo 0 correto 
+[90.0] Sou o processo 0 estou testando
+       O processo 0 testou o processo 1 correto 
+[120.0] Sou o processo 1 estou testando
+       O processo 1 testou o processo 2 correto 
+[120.0] Sou o processo 2 estou testando
+       O processo 2 testou o processo 0 correto 
+[120.0] Sou o processo 0 estou testando
+       O processo 0 testou o processo 1 correto 
+[150.0] Sou o processo 1 estou testando
+       O processo 1 testou o processo 2 correto 
+[150.0] Sou o processo 2 estou testando
+       O processo 2 testou o processo 0 correto 
+[150.0] Sou o processo 0 estou testando
+       O processo 0 testou o processo 1 correto 
+[180.0] Sou o processo 1 estou testando
+       O processo 1 testou o processo 2 correto 

@@ -1,7 +1,7 @@
 /*
   Autor: Eduardo Faria Kruger GRR20232329
-  programa: tempo1.c
-  Finalidade: Fazer cada processo testar o próximo no anel
+  programa: tempo2.c
+  Finalidade: Fazer cada processo testar o próximo no anel **até encontrar o próximo processo correto** 
   Data da última modificação 30/05/2026
 */
 
@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 {
   static int N, //número de processos do sistema distribuído
              token, //indica o processo que está executando
-             event, i, r, next,
+             event, r, i, next,
              MaxTempoSimulac = 180;
   static char fa_name[5];
 
@@ -54,20 +54,21 @@ int main(int argc, char *argv[])
     processo[i].id = facility(fa_name, 1);    
   }
 
-  //agendamento dos eventos iniciais. Faults precisam re recover (ou não), teste se auto agenda depois
-  
+  //Vamos agora fazer o escalonamento dos eventos iniciais
+  //No primeiro intervalo de testes os processos vão testar
+
   for(i=0; i<N; i++)
   {
     schedule(test, 30.0, i); //todos os processos de 0 até N-1 vão testar o processo seguinte na unidade de tempo 30 
   }
   for(i=1; i<N; i++)
   {
-    schedule(fault, 45.0, i); //todos os processos de 0 até N-1 vão falhar no tempo 45
-    schedule(recovery, 75.0, i); //todos os processos de 0 até N-1 vao recuperar no tempo 75
-    schedule(test, 90, i); //todos que tinham falhado voltam a testar
+    schedule(fault, 45.0, i); //todos os processos de 0 até N-1 vão falhar na unidade de tempo 45 
+    schedule(recovery, 75.0, i); //todos os processos de 0 até N-1 vão voltar na unidade de tempo 75
+    schedule(test, 90.0, i); //todos os processos que falharam voltam a testar
   }
   
-  printf("------------------------------tempo1.c-------------------------------------------------\n");
+  printf("----------------------------------------------tempo2.c--------------------------------------------------\n");
   //agora vem o loop processo principal do simulador
   while (time() < MaxTempoSimulac)
   {
@@ -79,30 +80,38 @@ int main(int argc, char *argv[])
         {
           break; //processo falho não testa
         }
-        printf("[%4.1f] Sou o processo %d estou testando\n", time(), token);
+        printf("[%4.1f] Sou o processo %d estou testando no tempo %4.1f\n", time(), token, time());
 
         //endereço do próximo processo no anel
         next = (token+1) % N;
 
-        //teste acontecendo
-        if(status(processo[next].id) != 0)
-          printf("       O processo %d testou o processo %d suspeito\n", token, next);
-        else 
-          printf("       O processo %d testou o processo %d correto \n", token, next);
-        schedule(test, 30.0, token); //agenda o próximo teste
+        //Eh nesse while que o teste de fato acontece
+        while(status(processo[next].id) != 0)
+        {
+          printf("       O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, next, time());
+          next = (next + 1) % N;
+        }
+        if(token == next)
+        {
+          printf("       O processo %d testou todos suspeitos e se testou correto\n", token);
+        }
+        else
+        {
+          printf("       O processo %d testou o processo %d correto\n", token, next);          
+        }
+        schedule(test, 30.0, token);
         break;
       
       case fault:
         r = request(processo[token].id, token, 0);
-        printf("[%4.1f] O processo %d falhou\n", time(), token);
+        printf("[%4.1f] O processo %d falhou no tempo %4.1f\n", time(), token, time());
         break;
       case recovery:
         release(processo[token].id, token);
-        printf("[%4.1f] O processo %d recuperou\n", time(), token);
+        printf("[%4.1f] O processo %d recuperou no tempo %4.1f\n", time(), token, time());
         break;
       
     } //switch
   } // while
 } //tempo.c
-
 

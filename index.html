@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -88,6 +89,42 @@
     </p>
 
   </section>
+  <div class="mt-5">
+      <h3>1.1 Trabalho 0</h3>
+      
+      <p>
+        Aqui seguem os arquivos de código e log para cada uma das 5 tarefas (0 a 4) do trabalho 0. 
+        Esses arquivos estão organizados da seguinte forma:
+      </p>
+
+      <ul>
+        <li>
+          <strong>Tarefa 0:</strong> 
+          <a href="./t0_Eduardo_Faria_Kruger/tempo0.c.txt">Código (tempo0.c.txt)</a> | 
+          <a href="./t0_Eduardo_Faria_Kruger/log0.txt">Log (log0.txt)</a>
+        </li>
+        <li>
+          <strong>Tarefa 1:</strong> 
+          <a href="./t0_Eduardo_Faria_Kruger/tempo1.c.txt">Código (tempo1.c.txt)</a> | 
+          <a href="./t0_Eduardo_Faria_Kruger/log1.txt">Log (log1.txt)</a>
+        </li>
+        <li>
+          <strong>Tarefa 2:</strong> 
+          <a href="./t0_Eduardo_Faria_Kruger/tempo2.c.txt">Código (tempo2.c.txt)</a> | 
+          <a href="./t0_Eduardo_Faria_Kruger/log2.txt">Log (log2.txt)</a>
+        </li>
+        <li>
+          <strong>Tarefa 3:</strong> 
+          <a href="./t0_Eduardo_Faria_Kruger/tempo3.c.txt">Código (tempo3.c.txt)</a> | 
+          <a href="./t0_Eduardo_Faria_Kruger/log3.txt">Log (log3.txt)</a>
+        </li>
+        <li>
+          <strong>Tarefa 4:</strong> 
+          <a href="./t0_Eduardo_Faria_Kruger/tempo4.c.txt">Código (tempo4.c.txt)</a> | 
+          <a href="./t0_Eduardo_Faria_Kruger/log4.txt">Log (log4.txt)</a>
+        </li>
+      </ul>
+  </div>
 
   <!-- ESTRUTURA -->
   <section class="section-divider">
@@ -131,12 +168,6 @@
 
     <h2>3. Algoritmo 1 — Eleição de Líder em Anel (Chang-Roberts)</h2>
 
-    <h3>3.1 Objetivo</h3>
-
-    <p>
-      Implementar o algoritmo de eleição de líder baseado
-      em Chang-Roberts utilizando uma topologia em anel.
-    </p>
 
     <h3>3.2 Descrição do Algoritmo</h3>
 
@@ -155,8 +186,14 @@
 	  anunciando qual processo ele acredita que é o líder e se ele também é um candidato. Caso ele receba uma mensagem de outro processo e o ID recebido
 	  for maior que o ID do processo que ele acredita que é o líder, então ele passa a acreditar que o ID recebido é o ID do processo líder
 	  O Algoritmo acaba quando um processo X anuncia que é o líder para o processo (X+1) mod N, que percorre todo anel até chegar no processo (X-1) mod N
-	  Quando ele recebe o próprio ID do processo (X-1) mod N então todos acreditam que ele é o líder e o algoritmo acaba.
+	  Quando ele recebe o próprio ID do processo (X-1) mod N então todos acreditam que ele é o líder e o algoritmo acaba. Abaixo segue a imagem com a descrição de como funciona o algoritmo
+
 	</p>
+	<img
+    src="./assets/diagrama_chang-roberts.png"
+    height=240
+    width=1080
+	/>
     <h3>3.3 Decisões de Implementação</h3>
 
     <ul>
@@ -323,13 +360,6 @@ make
 
     <h2>4. Algoritmo 2 — Randomized Leader Election Algorithm</h2>
 
-    <h3>4.1 Objetivo</h3>
-
-    <p>
-      Implementar o algoritmo aleatorizado de eleição
-      de líder baseado em Vring.
-    </p>
-
     <h3>4.2 Descrição do Algoritmo</h3>
 
     <p>
@@ -366,9 +396,9 @@ make
       </li>
 	  <p>A imagem a seguir mostra um diagrama da execução do algoritmo em rodadas assumindo 4 processos (0..3) e apenas o processo 0 como candidato</p>
       <img
-		src="./assets/diagrama_randomized.png"
-		height=260
-		width=1080
+    		src="./assets/diagrama_randomized.png"
+    		height=240
+    		width=1080
       />
     </ul>
 

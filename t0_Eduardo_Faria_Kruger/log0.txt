@@ -1,0 +1,16 @@
+Sou o processo 0 estou testando no tempo 30.0
+Sou o processo 1 estou testando no tempo 30.0
+Sou o processo 2 estou testando no tempo 30.0
+Sou o processo 0 estou testando no tempo 60.0
+Sou o processo 1 estou testando no tempo 60.0
+Sou o processo 2 estou testando no tempo 60.0
+Sou o processo 0 estou testando no tempo 90.0
+Sou o processo 1 estou testando no tempo 90.0
+Sou o processo 2 estou testando no tempo 90.0
+Sou o processo 0 estou testando no tempo 120.0
+Sou o processo 1 estou testando no tempo 120.0
+Sou o processo 2 estou testando no tempo 120.0
+Sou o processo 0 estou testando no tempo 150.0
+Sou o processo 1 estou testando no tempo 150.0
+Sou o processo 2 estou testando no tempo 150.0
+Sou o processo 0 estou testando no tempo 180.0

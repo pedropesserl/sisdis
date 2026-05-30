@@ -1,7 +1,7 @@
-/*
-  programa: tempo3.c
-  Finalidade: Fazer com que cada processo guarde o vetor state, que possui as informações sobre os estados de todos os processos do sistema distribuído 
-  Data da última modificação: 30/05/2026
+/*begin
+  programa: tempo4.c
+  Finalidade: Fazer com que a cada teste teste correto, o processo testador obtenha todas as informações do vetor state do processo testado 
+  Data da última modificação 30/05/2026
 */
 
 #include <stdio.h>
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
   static int N, //número de processos do sistema distribuído
              token, //indica o processo que está executando
              event, r, i, next,
-             MaxTempoSimulac = 120;
+             MaxTempoSimulac = 180;
   static char fa_name[5];
   TipoProcesso *processos;
 
@@ -43,7 +43,8 @@ int main(int argc, char *argv[])
     exit(1);
   }
   N = atoi(argv[1]);
-  printf("------------------------------tempo3.c-----------------------------\n");
+
+  printf("-------------------------------------------tempo4.c---------------------------------------\n");
   smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
   reset();
   stream(1);
@@ -111,14 +112,13 @@ int main(int argc, char *argv[])
   {
     schedule(test, 30.0, i); //todos os processos de 0 até N-1 vão testar o processo seguinte na unidade de tempo 30 
   }
-  for(int i=1; i < N; i++)
+  for(i=1; i<N; i++)
   {
-    schedule(fault, 45.0, i); //todos os processos de 1 até N-1 vão falhar na unidade de tempo 45
-    schedule(recovery, 75.0, i); //todos os processos de 1 até N-1 vão voltar na unidade de tempo 75
-    schedule(test, 90.0, i); //os processos que antes falharam e recuperaram voltam a testar
+    schedule(fault, 45.0, i); //todos os processos de 1 até N-1 vão falhar na unidade de tempo 30 
+    schedule(recovery, 75.0, i); //todos os processos de 1 até N-1 vão recuperar na unidade de tempo 45
+    schedule(test, 90.0, i); //todos os processos que falharam antes voltam a testar normal 
   }
   
-
   //agora vem o loop processo principal do simulador
   while (time() < MaxTempoSimulac)
   {
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
         {
           printf("       O processo %d testou o processo %d suspeito no tempo %4.1f\n", token, next, time());
           processos[token].state[next] = FAILED;
-          printStateVector(&processos, N, token, 7); //imprime com padding de 7 pra facilitar na leitura dos logs, vai tudo ficar identado
+          printStateVector(&processos, N, token, 7); //imprime com padding de 13 pra facilitar na leitura dos logs, vai tudo ficar identado
           next = (next + 1) % N;
         }
         if(token == next)
@@ -147,7 +147,9 @@ int main(int argc, char *argv[])
         else
         {
           printf("       O processo %d testou o processo %d correto\n", token, next);          
-          processos[token].state[next] = CORRECT;
+          memcpy(processos[token].state, processos[next].state, N * sizeof(int)); //obtem o vetor state do processo testado
+          processos[token].state[token] = CORRECT; //marca esse processo como correto (pois testou correto)
+          processos[token].state[next] = CORRECT; //se marca como correto (pois se penso logo existo)
           printStateVector(&processos, N, token, 7);          
         }
         schedule(test, 30.0, token);
