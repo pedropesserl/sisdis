@@ -52,7 +52,7 @@ int num_candidates(Processo *p, int N) {
 void print_candidates(int N) {
     printf("Os candidatos a lider sao: [");
     for (int i = 0; i < N; i++) {
-        if (processos[i].bit == 1) {
+        if (processos[i].bit == 1 && status(processos[i].id) == 0) {
             printf(" %d", i);
         }
     }
@@ -62,7 +62,7 @@ void print_candidates(int N) {
 void print_beliefs(int N, int i) {
   printf("Vetor de candidatos do processo %d: [", i);
   for (int j = 0; j < N; j++) {
-      printf(" %d", processos[i].candidates[j]);
+      printf(" %d", processos[i].candidates[j] && processos[i].states[j] == CORRETO);
   }
   printf(" ]\n");
 }
@@ -273,20 +273,15 @@ int main(int argc, char **argv) {
         processos[i].candidates = malloc(sizeof(bool) * N);
     }
 
-    printf("--------------------- teste: sem falhas -------------------\n");
+    printf("---- teste: sem falhas ------------------------------------------\n");
     init_simulacao(N, fa_name);
     escalona_sem_falhas(N);
     simula(N, MaxTempoSimulac);
 
-    //    printf("----------------- teste: falhas aleatorias ----------------\n");
-    //    init_simulacao(N, fa_name);
-    //    escalona_rand(N);
-    //    simula(N, MaxTempoSimulac);
-
-    //    printf("-------------- teste: todos os demais falham --------------\n");
-    //    init_simulacao(N, fa_name);
-    //    escalona_falhas(N);
-    //    simula(N, MaxTempoSimulac);
+    printf("---- teste: falhas aleatorias -----------------------------------\n");
+    init_simulacao(N, fa_name);
+    escalona_rand(N);
+    simula(N, MaxTempoSimulac);
 
     for (int i = 0; i < N; i++) {
         free(processos[i].states);
