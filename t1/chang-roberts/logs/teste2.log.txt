@@ -1,3 +1,7 @@
+Log do trabalho pratico 1 de Sistemas Distribuidos Prof. Elias
+Testando o algoritmo de eleicao de lider Chang-Roberts
+Programa executado para N = 5 processos
+Tempo total de simulacao = 5.1
 ---- teste: candidatos aleatorios -------------------------------
 Os candidatos a lider sao: [  0  4]
 [ 1.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: []
