@@ -21,13 +21,13 @@ typedef enum {
 } State;
 
 typedef struct {
-    int id;             // identificador de facility do SMPL
-    int pid;            // processId diferente do identificador do SMPL
-    int leader_id;      // atual candidato a lider deste processo
-    int msg;            // buffer da mensagem recebida
-    int am_i_candidate; // se o processo remetente eh lider
-    bool *tested;       // processos que testou nessa rodada
-    State *states;      // crenca do processo a respeito dos estados dos demais
+    int id;              // identificador de facility do SMPL
+    int pid;             // processId diferente do identificador do SMPL
+    int leader_id;       // atual candidato a lider deste processo
+    int msg;             // buffer da mensagem recebida
+    bool am_i_candidate; // se o processo remetente eh lider
+    bool *tested;        // processos que testou nessa rodada
+    State *states;       // crenca do processo a respeito dos estados dos demais
 } Processo;
 
 Processo *processos;
@@ -92,7 +92,7 @@ void init_simulacao(int N, char fa_name[5]) {
             processos[i].tested[j] = false;
         }
         processos[i].pid = i;
-        processos[i].am_i_candidate = 0;
+        processos[i].am_i_candidate = false;
         processos[i].states[i] = CORRETO;
         processos[i].tested[i] = true;
         processos[i].leader_id = -1;

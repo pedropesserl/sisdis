@@ -6,8 +6,8 @@ lider: randomized_leader_election.o smpl.o rand.o
 smpl.o: smpl.c smpl.h
 	$(COMPILE.c)  -g smpl.c
 
-chang-roberts.o: randomized_leader_election.c smpl.h
-	$(COMPILE.c) -g  randomized_leader_election.c -I.
+randomized_leader_election.o: randomized_leader_election.c smpl.h
+	$(COMPILE.c) -g  randomized_leader_election.c -Wall -Wextra -Wno-unused-function -I.
 
 rand.o: rand.c
 	$(COMPILE.c) -g rand.c
