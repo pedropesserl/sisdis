@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -83,7 +82,7 @@
       Para todos os efeitos consideramos o salto de tempo do SMPL como 1 unidade, então eventos acontecem na unidade 1, depois na unidade 2, etc...
       Isso só não acontece nos envios de mensagem, que demoram 0.1 unidades de tempo para chegarem
 
-      Estamos também trabalhando no modelo de falhas Crash, uma vez que o processo falha ele não volta mais.
+      Estamos também trabalhando no modelo de falhas Crash: uma vez que o processo falha ele não volta mais.
 
       Além disso estamos trabalhando com o modelo de tempo síncrono, pois temos total clareza sobre o tempo de execução de uma ação usando o SMPL.
     </p>
@@ -154,17 +153,15 @@ t1
 │       └── teste4.log.txt
 └── randomized-leader-election
     ├── code
-    │   ├── lider
     │   ├── makefile
     │   ├── rand.c
-    │   ├── rand.o
     │   ├── randomized_leader_election.c
     │   ├── randomized_leader_election.c.txt
-    │   ├── randomized_leader_election.o
     │   ├── smpl.c
-    │   ├── smpl.h
-    │   └── smpl.o
+    │   └── smpl.h
     └── logs
+        ├── teste1.log.txt
+        └── teste2.log.txt
 </pre>
 
   </section>
@@ -189,8 +186,7 @@ t1
 
 	<p>
 	  Cada processo guarda quem ele acredita que é o líder, e a cada T quantidades de tempo ele manda uma mensagem para o processo seguinte no anel
-	  anunciando qual processo ele acredita que é o líder e se ele também é um candidato. Caso ele receba uma mensagem de outro processo e o ID recebido
-	  for maior que o ID do processo que ele acredita que é o líder, então ele passa a acreditar que o ID recebido é o ID do processo líder
+	  anunciando qual processo ele acredita que é o líder e se ele também é um candidato. Quando ele recebe um ID de outro processo, atualiza o candidato a líder de acordo com o maior ID (entre dois processos, escolhe o maior).
 	  O Algoritmo acaba quando um processo X anuncia que é o líder para o processo (X+1) mod N, que percorre todo anel até chegar no processo (X-1) mod N
 	  Quando ele recebe o próprio ID do processo (X-1) mod N então todos acreditam que ele é o líder e o algoritmo acaba. Abaixo segue a imagem com a descrição de como funciona o algoritmo
 
@@ -208,29 +204,25 @@ t1
       <li>Contagem de mensagens trocadas</li>
     </ul>
 
-	Como Enviar mensagens entre processos? Temos na struct de cada processo as variáveis <code>msg</code> e <code>am_i_candidate</code>. Quando um processo a testa um processo b correto
-	ele escreve nessas variáveis <code>msg</code> <code>am_i_candidate</code> do processo b e agenda um evento do tipo <code>RECEIVE</code> para o processo b 0.1 unidades de tempo depois
-	b por sua vez, quando trata o evento <code>RECEIVE</code> apenas lê esse buffer e processa os valores.
+    Como enviar mensagens entre processos? Temos na struct de cada processo as variáveis <code>msg</code> e <code>am_i_candidate</code>. Quando um processo <strong>a</strong> testa um processo <strong>b</strong> correto,
+    ele escreve nessas variáveis <code>msg</code> e <code>am_i_candidate</code> do processo <strong>b</strong> e agenda um evento do tipo <code>RECEIVE</code> para o processo <strong>b</strong> 0.1 unidades de tempo depois.
+    Por sua vez, <strong>b</strong>, quando trata o evento <code>RECEIVE</code>, apenas lê esse buffer e processa os valores.
 
-	Por que criamos a variável <code>pid</code> além da variável <code>id</code>? Pois o identificador do SMPL não é necessariamente igual ao índice do processo
-	Durante o desenvolvimento tivemos alguns problemas de vários processos sendo eleitos. Isso acontecia pois o processo 0 poderia ter o id do SMPL 2 por exemplo. Então
-	apenas para manter uma consistência criamos essa variável
+	Por que criamos a variável <code>pid</code> além da variável <code>id</code>? Pois o identificador do SMPL não é necessariamente igual ao índice do processo.
+	Durante o desenvolvimento tivemos alguns problemas de vários processos sendo eleitos, devido a uma confusão com os IDs, então criamos essa variável por consistência.
 
-	Para contarmos as mensagens trocadas temos uma variável global que é atualizada em todo evento <code>RECEIVE</code> tratado.
+	Para contarmos as mensagens trocadas, temos uma variável global que é atualizada em todo evento <code>RECEIVE</code> tratado.
     <h3>3.4 Estruturas de Dados</h3>
 
 <pre>
 typedef struct {
-    int id;                 // identificador de facility do SMPL
-    int pid;                // processId diferente do identificador do SMPL
-    bool bit;               // bit sorteado nessa rodada
-    int num_candidates;     // quantidade de processos que se candidataram nessa rodada
-    int id_ult_candidato;   // id do ultimo processo candidato recebido
-    Mensagem msg;           // buffer da mensagem recebida
-    int num_msgs_esperadas; // quantidade de mensagens que espera receber
-    int num_msgs_recebidas; // quantidade de mensagens que recebeu nessa rodada
-    bool *tested;           // processos que testou nessa rodada
-    State *states;          // crenca do processo a respeito dos estados dos demais
+    int id;              // identificador de facility do SMPL
+    int pid;             // processId diferente do identificador do SMPL
+    int leader_id;       // atual candidato a lider deste processo
+    int msg;             // buffer da mensagem recebida
+    bool am_i_candidate; // se o processo remetente eh lider
+    bool *tested;        // processos que testou nessa rodada
+    State *states;       // crenca do processo a respeito dos estados dos demais
 } Processo;
 </pre>
 
@@ -391,8 +383,8 @@ make
       <li>
       	Execução baseada em rodadas: Como saber quando uma rodada acaba? Da mesma maneira que no Chang-Roberts, a virada de chave acontece quando um processo recebe
 		a mensagem que ele mesmo mandou. Isso só é possível nesse algoritmo pois criamos o buffer <code>msg_to_send</code> em cada processo. Essa variável tem a seguinte utilidade:
-		se um processo é candidato (bit 1) ele manda as suas informações para frente. Caso ele já tenha mandado a sua mensagem pra frente, ele deve repassar as mensagens que recebe para frente, e isso é feito usando esse buffer
-		Os processos não candidatos (bit 0) apenas repassam mensagens pra frente, também usando o buffer. Para saber se um processo já enviou as suas informações em caso de candidato (bit 1) usamos a variável <code>sent</code>
+		se um processo é candidato (bit 1) ele manda as suas informações para frente. Caso ele já tenha mandado a sua mensagem pra frente, ele deve repassar as mensagens que recebe para frente, e isso é feito usando esse buffer.
+		Os processos não candidatos (bit 0) apenas repassam mensagens pra frente, também usando o buffer. Para saber se um processo já enviou as suas informações em caso de candidato (bit 1) usamos a variável <code>sent</code>.
 		Se o valor dela é negativo, os valores enviados são do próprio processo, caso contrário ele apenas repassa mensagens para frente, independente do que for.
       </li>
       <li>
@@ -421,15 +413,17 @@ typedef struct {
 } Mensagem;
 
 typedef struct {
-    int id;                            // identificador de facility do SMPL
-    int pid;                           // processId diferente do identificador do SMPL
-    bool bit;                          // bit sorteado nessa rodada
-    bool sent;                         // indica se naquela rodada ele ja mandou seu bit ou se deve so repassar o que esta no buffer
-    Mensagem msg;                      // buffer da mensagem recebida
-    Mensagem msg_to_send;              // buffer de mensagens a enviar
-    Decision *decisions;               // vetor que guarda quais processos p acredita serem candidatos
-    bool *tested;                      // processos que testou nessa rodada
-    State *states;                     // crenca do processo a respeito dos estados dos demais
+    int id;               // identificador de facility do SMPL
+    int pid;              // processId diferente do identificador do SMPL
+    bool bit;             // bit sorteado nessa rodada
+    bool sent;            // indica se naquela rodada ele ja mandou seu bit ou se deve so repassar o que esta no buffer
+    int timeout;          // numero de mensagens que faltam ate receber a propria mensagem de novo
+    int alive;            // numero de processos vivos 
+    Mensagem msg;         // buffer da mensagem recebida
+    Mensagem msg_to_send; // buffer de mensagens a enviar
+    bool *candidates;     // processos que acredita serem candidatos
+    bool *tested;         // processos que testou nessa rodada
+    State *states;        // crenca do processo a respeito dos estados dos demais
 } Processo;
 </pre>
 
@@ -459,20 +453,19 @@ make
     <div class="card mb-4">
       <div class="card-body">
 
-        <h4>Teste 1 — ???</h4>
+        <h4>Teste 1 — Sem falhas</h4>
 
         <ul>
-          <li>Número de processos: A FAZER</li>
-          <li>Rodadas executadas: A FAZER</li>
-          <li>Líder esperado: A FAZER</li>
+          <li>Número de processos: 5</li>
+          <li>Rodadas executadas: 11</li>
         </ul>
 
         <h5>Resultados</h5>
 
         <ul>
-          <li>Líder eleito: A FAZER</li>
-          <li>Total de mensagens: A FAZER</li>
-          <li>Tempo SMPL: A FAZER</li>
+          <li>Líder eleito: Processo 0</li>
+          <li>Total de mensagens: 50</li>
+          <li>Tempo SMPL: 10.1</li>
         </ul>
 
         <a href="./t1/randomized-leader-election/logs/teste1.log.txt">
@@ -486,50 +479,22 @@ make
     <div class="card mb-4">
       <div class="card-body">
 
-        <h4>Teste 2 — ???</h4>
+        <h4>Teste 2 — Falhas aleatórias</h4>
 
         <ul>
-          <li>Número de processos:A FAZER</li>
-          <li>Rodadas executadas: A FAZER</li>
-          <li>Líder esperado: A FAZER</li>
+          <li>Número de processos: 5</li>
+          <li>Rodadas executadas: 8</li>
         </ul>
 
         <h5>Resultados</h5>
 
         <ul>
-          <li>Líder eleito: A FAZER</li>
-          <li>Total de mensagens: A FAZER</li>
-          <li>Tempo SMPL: A FAZER</li>
+          <li>Líder eleito: Processo 1</li>
+          <li>Total de mensagens: 37</li>
+          <li>Tempo SMPL: 9.1</li>
         </ul>
 
         <a href="./t1/randomized-leader-election/logs/teste2.log.txt">
-          Log completo
-        </a>
-
-      </div>
-    </div>
-
-    <!-- TESTE 3 -->
-    <div class="card mb-4">
-      <div class="card-body">
-
-        <h4>Teste 3 — ???</h4>
-
-        <ul>
-          <li>Número de processos: A FAZER</li>
-          <li>Rodadas executadas: A FAZER</li>
-          <li>Líder esperado: A FAZER</li>
-        </ul>
-
-        <h5>Resultados</h5>
-
-        <ul>
-          <li>Líder eleito: A FAZER</li>
-          <li>Total de mensagens: A FAZER</li>
-          <li>Tempo SMPL: A FAZER</li>
-        </ul>
-
-        <a href="./t1/randomized-leader-election/logs/teste3.log.txt">
           Log completo
         </a>
 
@@ -543,8 +508,8 @@ make
 
     <h2>5. Conclusão</h2>
     <p>
-    	No geral percebemos a dificuldade de escrever um algoritmo em um sistema distribuído, pois os problemas que aparecem, como por exemplo entender as condições de parada, o que acontece quando um processo falha bem em um instante crítico
-    	como fazer todos os processos saberem sobre todos os processo entre outros não são simples de resolver.
+    	No geral percebemos a dificuldade de escrever um algoritmo em um sistema distribuído, pois os problemas que aparecem, como por exemplo entender as condições de parada, o que acontece quando um processo falha bem em um instante crítico,
+    	como fazer todos os processos saberem sobre todos os processo, entre outros, não são simples de resolver.
     </p>
   </section>
 

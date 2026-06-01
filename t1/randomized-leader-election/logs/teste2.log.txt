@@ -1,0 +1,233 @@
+Log do trabalho pratico 1 de Sistemas Distribuidos Prof. Elias
+Testando o algoritmo de eleicao de lider aleatorizado
+Programa executado para N = 5 processos
+Tempo total de simulacao = 9.1
+---- teste: falhas aleatorias -----------------------------------
+Vetor de candidatos do processo 0: [ 1 0 0 0 0 ]
+Vetor de candidatos do processo 1: [ 0 0 0 0 0 ]
+Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+Os candidatos a lider sao: [ 0 4 ]
+[ 1.0] O processo 0 testou o processo 1 correto e obteve informacao sobre: []
+       O processo 0 enviou a mensagem {bit: 1, pid: 0} para o processo 1
+       Vetor de estados do processo 0: [ C C U U U ]
+       Vetor de candidatos do processo 0: [ 1 0 0 0 0 ]
+[ 1.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: []
+       O processo 1 enviou a mensagem {bit: 0, pid: 1} para o processo 2
+       Vetor de estados do processo 1: [ U C C U U ]
+       Vetor de candidatos do processo 1: [ 0 0 0 0 0 ]
+[ 1.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: []
+       O processo 2 enviou a mensagem {bit: 0, pid: 2} para o processo 3
+       Vetor de estados do processo 2: [ U U C C U ]
+       Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+[ 1.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: []
+       O processo 3 enviou a mensagem {bit: 0, pid: 3} para o processo 4
+       Vetor de estados do processo 3: [ U U U C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 1.0] O processo 4 testou o processo 0 correto e obteve informacao sobre: [ 1 ]
+       O processo 4 enviou a mensagem {bit: 1, pid: 4} para o processo 0
+       Vetor de estados do processo 4: [ C C U U C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+[ 1.1] O processo 1 recebeu a mensagem {bit: 1, pid: 0} e está com o timeout = 4
+[ 1.1] O processo 2 recebeu a mensagem {bit: 0, pid: 1} e está com o timeout = 4
+[ 1.1] O processo 3 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 4
+[ 1.1] O processo 4 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 4
+[ 1.1] O processo 0 recebeu a mensagem {bit: 1, pid: 4} e está com o timeout = 4
+[ 2.0] O processo 0 falhou
+[ 2.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 3 ]
+       O processo 1 repassou a mensagem {bit: 1 , pid: 0} para o processo 2
+       Vetor de estados do processo 1: [ U C C C U ]
+       Vetor de candidatos do processo 1: [ 0 0 0 0 0 ]
+[ 2.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 4 ]
+       O processo 2 repassou a mensagem {bit: 0 , pid: 1} para o processo 3
+       Vetor de estados do processo 2: [ U U C C C ]
+       Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+[ 2.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1 ]
+       O processo 3 repassou a mensagem {bit: 0 , pid: 2} para o processo 4
+       Vetor de estados do processo 3: [ C C U C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 2.0] O processo 4 testou o processo 0 suspeito
+[ 2.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 0 , pid: 3} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+[ 2.1] O processo 2 recebeu a mensagem {bit: 1, pid: 0} e está com o timeout = 3
+[ 2.1] O processo 3 recebeu a mensagem {bit: 0, pid: 1} e está com o timeout = 3
+[ 2.1] O processo 4 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 3
+[ 2.1] O processo 1 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 3
+[ 3.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 3  4 ]
+       O processo 1 repassou a mensagem {bit: 0 , pid: 3} para o processo 2
+       Vetor de estados do processo 1: [ U C C C C ]
+       Vetor de candidatos do processo 1: [ 0 0 0 0 0 ]
+[ 3.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 repassou a mensagem {bit: 1 , pid: 0} para o processo 3
+       Vetor de estados do processo 2: [ C C C C C ]
+       Vetor de candidatos do processo 2: [ 1 0 0 0 0 ]
+[ 3.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 repassou a mensagem {bit: 0 , pid: 1} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 3.0] O processo 4 testou o processo 0 suspeito
+[ 3.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 0 , pid: 2} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+[ 3.1] O processo 2 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 2
+[ 3.1] O processo 3 recebeu a mensagem {bit: 1, pid: 0} e está com o timeout = 2
+[ 3.1] O processo 4 recebeu a mensagem {bit: 0, pid: 1} e está com o timeout = 2
+[ 3.1] O processo 1 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 2
+[ 4.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 repassou a mensagem {bit: 0 , pid: 2} para o processo 2
+       Vetor de estados do processo 1: [ C C C C C ]
+       Vetor de candidatos do processo 1: [ 1 0 0 0 0 ]
+[ 4.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 repassou a mensagem {bit: 0 , pid: 3} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+[ 4.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 repassou a mensagem {bit: 1 , pid: 0} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 4.0] O processo 4 testou o processo 0 suspeito
+[ 4.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 0 , pid: 1} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+[ 4.1] O processo 2 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 1
+       O processo 2 terminou uma rodada
+       O processo 2 detectou que NAO HA NENHUM candidato: sorteando bit novamente
+       O processo 2 tinha o bit = 0 e agora tem o bit = 0 
+[ 4.1] O processo 3 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 1
+       O processo 3 terminou uma rodada
+       O processo 3 detectou que NAO HA NENHUM candidato: sorteando bit novamente
+       O processo 3 tinha o bit = 0 e agora tem o bit = 0 
+[ 4.1] O processo 4 recebeu a mensagem {bit: 1, pid: 0} e está com o timeout = 1
+[ 4.1] O processo 1 recebeu a mensagem {bit: 0, pid: 1} e está com o timeout = 1
+       O processo 1 terminou uma rodada
+[ 5.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 enviou a mensagem {bit: 0, pid: 1} para o processo 2
+       Vetor de estados do processo 1: [ S C C C C ]
+       Vetor de candidatos do processo 1: [ 0 0 0 0 0 ]
+[ 5.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 enviou a mensagem {bit: 0, pid: 2} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+[ 5.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 enviou a mensagem {bit: 0, pid: 3} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 5.0] O processo 4 testou o processo 0 suspeito
+[ 5.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 1 , pid: 0} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 1 ]
+[ 5.1] O processo 2 recebeu a mensagem {bit: 0, pid: 1} e está com o timeout = 0
+       O processo 2 detectou uma falha no sequenciamento: reiniciando bit
+       O processo 2 tinha o bit = 0 e agora tem o bit = 0 
+[ 5.1] O processo 3 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 0
+       O processo 3 detectou uma falha no sequenciamento: reiniciando bit
+       O processo 3 tinha o bit = 0 e agora tem o bit = 0 
+[ 5.1] O processo 4 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 0
+       O processo 4 detectou uma falha no sequenciamento: reiniciando bit
+       O processo 4 tinha o bit = 1 e agora tem o bit = 0 
+[ 5.1] O processo 1 recebeu a mensagem {bit: 1, pid: 0} e está com o timeout = 0
+       O processo 1 detectou uma falha no sequenciamento: reiniciando bit
+       O processo 1 tinha o bit = 0 e agora tem o bit = 1 
+[ 6.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 enviou a mensagem {bit: 1, pid: 1} para o processo 2
+       Vetor de estados do processo 1: [ S C C C C ]
+       Vetor de candidatos do processo 1: [ 0 1 0 0 0 ]
+[ 6.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 enviou a mensagem {bit: 0, pid: 2} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 0 0 0 0 ]
+[ 6.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 enviou a mensagem {bit: 0, pid: 3} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 6.0] O processo 4 testou o processo 0 suspeito
+[ 6.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 enviou a mensagem {bit: 0, pid: 4} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 0 ]
+[ 6.1] O processo 2 recebeu a mensagem {bit: 1, pid: 1} e está com o timeout = 3
+[ 6.1] O processo 3 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 3
+[ 6.1] O processo 4 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 3
+[ 6.1] O processo 1 recebeu a mensagem {bit: 0, pid: 4} e está com o timeout = 3
+[ 7.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 repassou a mensagem {bit: 0 , pid: 4} para o processo 2
+       Vetor de estados do processo 1: [ S C C C C ]
+       Vetor de candidatos do processo 1: [ 0 1 0 0 0 ]
+[ 7.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 repassou a mensagem {bit: 1 , pid: 1} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 1 0 0 0 ]
+[ 7.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 repassou a mensagem {bit: 0 , pid: 2} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 0 0 0 0 ]
+[ 7.0] O processo 4 testou o processo 0 suspeito
+[ 7.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 0 , pid: 3} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 0 ]
+[ 7.1] O processo 2 recebeu a mensagem {bit: 0, pid: 4} e está com o timeout = 2
+[ 7.1] O processo 3 recebeu a mensagem {bit: 1, pid: 1} e está com o timeout = 2
+[ 7.1] O processo 4 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 2
+[ 7.1] O processo 1 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 2
+[ 8.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 repassou a mensagem {bit: 0 , pid: 3} para o processo 2
+       Vetor de estados do processo 1: [ S C C C C ]
+       Vetor de candidatos do processo 1: [ 0 1 0 0 0 ]
+[ 8.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 repassou a mensagem {bit: 0 , pid: 4} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 1 0 0 0 ]
+[ 8.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 repassou a mensagem {bit: 1 , pid: 1} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 1 0 0 0 ]
+[ 8.0] O processo 4 testou o processo 0 suspeito
+[ 8.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 0 , pid: 2} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 0 0 0 0 ]
+[ 8.1] O processo 2 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 1
+[ 8.1] O processo 3 recebeu a mensagem {bit: 0, pid: 4} e está com o timeout = 1
+[ 8.1] O processo 4 recebeu a mensagem {bit: 1, pid: 1} e está com o timeout = 1
+[ 8.1] O processo 1 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 1
+[ 9.0] O processo 1 testou o processo 2 correto e obteve informacao sobre: [ 0  3  4 ]
+       O processo 1 repassou a mensagem {bit: 0 , pid: 2} para o processo 2
+       Vetor de estados do processo 1: [ S C C C C ]
+       Vetor de candidatos do processo 1: [ 0 1 0 0 0 ]
+[ 9.0] O processo 2 testou o processo 3 correto e obteve informacao sobre: [ 0  1  4 ]
+       O processo 2 repassou a mensagem {bit: 0 , pid: 3} para o processo 3
+       Vetor de estados do processo 2: [ S C C C C ]
+       Vetor de candidatos do processo 2: [ 0 1 0 0 0 ]
+[ 9.0] O processo 3 testou o processo 4 correto e obteve informacao sobre: [ 0  1  2 ]
+       O processo 3 repassou a mensagem {bit: 0 , pid: 4} para o processo 4
+       Vetor de estados do processo 3: [ S C C C C ]
+       Vetor de candidatos do processo 3: [ 0 1 0 0 0 ]
+[ 9.0] O processo 4 testou o processo 0 suspeito
+[ 9.0] O processo 4 testou o processo 1 correto e obteve informacao sobre: [ 2  3 ]
+       O processo 4 repassou a mensagem {bit: 1 , pid: 1} para o processo 1
+       Vetor de estados do processo 4: [ S C C C C ]
+       Vetor de candidatos do processo 4: [ 0 1 0 0 0 ]
+[ 9.1] O processo 2 recebeu a mensagem {bit: 0, pid: 2} e está com o timeout = 0
+       O processo 2 terminou uma rodada
+[ 9.1] O processo 3 recebeu a mensagem {bit: 0, pid: 3} e está com o timeout = 0
+       O processo 3 terminou uma rodada
+[ 9.1] O processo 4 recebeu a mensagem {bit: 0, pid: 4} e está com o timeout = 0
+       O processo 4 terminou uma rodada
+[ 9.1] O processo 1 recebeu a mensagem {bit: 1, pid: 1} e está com o timeout = 0
+       O processo 1 terminou uma rodada
+[ 9.1] O processo 1 foi eleito o lider do sistema
+FIM DO ALGORITMO (tempo:  9.1).
+O processo 0 esta falho
+Vetor de candidatos do processo 1: [ 0 1 0 0 0 ]
+Vetor de candidatos do processo 2: [ 0 1 0 0 0 ]
+Vetor de candidatos do processo 3: [ 0 1 0 0 0 ]
+Vetor de candidatos do processo 4: [ 0 1 0 0 0 ]
+Total de mensagens transmitidas na execucao do algoritmo: 37
+Total de rodadas necessarias: 8
