@@ -66,8 +66,9 @@ int main(int argc, char *argv[])
     schedule(recovery, 75.0, i); //todos os processos de 0 até N-1 vao recuperar no tempo 75
     schedule(test, 90, i); //todos que tinham falhado voltam a testar
   }
-  
-  printf("------------------------------tempo1.c-------------------------------------------------\n");
+  printf("Log do trabalho prático 0 de Sistemas Distribuídos Prof. Elias\n");
+  printf("Programa executado para N = 3 processos\n");
+  printf("------------------------------tempo1.c-----------------------------\n");
   //agora vem o loop processo principal do simulador
   while (time() < MaxTempoSimulac)
   {

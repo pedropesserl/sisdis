@@ -1,4 +1,5 @@
 /*
+  Autor: Eduardo Faria Kruger GRR20232329
   programa: tempo3.c
   Finalidade: Fazer com que cada processo guarde o vetor state, que possui as informações sobre os estados de todos os processos do sistema distribuído 
   Data da última modificação: 30/05/2026
@@ -43,6 +44,9 @@ int main(int argc, char *argv[])
     exit(1);
   }
   N = atoi(argv[1]);
+  
+  printf("Log do trabalho prático 0 de Sistemas Distribuídos Prof. Elias\n");
+  printf("Programa executado para N = 3 processos\n");
   printf("------------------------------tempo3.c-----------------------------\n");
   smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
   reset();

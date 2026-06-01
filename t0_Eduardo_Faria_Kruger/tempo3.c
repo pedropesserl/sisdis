@@ -44,6 +44,9 @@ int main(int argc, char *argv[])
     exit(1);
   }
   N = atoi(argv[1]);
+  
+  printf("Log do trabalho prático 0 de Sistemas Distribuídos Prof. Elias\n");
+  printf("Programa executado para N = 3 processos\n");
   printf("------------------------------tempo3.c-----------------------------\n");
   smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
   reset();

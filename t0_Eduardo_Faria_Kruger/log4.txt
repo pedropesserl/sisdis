@@ -1,3 +1,5 @@
+Log do trabalho prático 0 de Sistemas Distribuídos Prof. Elias
+Programa executado para N = 3 processos
 ------------------------------tempo4.c-----------------------------
 Vetor State do processo 0: C U U 
 Vetor State do processo 1: U C U 

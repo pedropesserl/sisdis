@@ -1,3 +1,5 @@
+Log do trabalho prático de Sistemas Distribuídos Prof. Elias
+Programa executado para N = 3 processos
 ------------------------------tempo0.c-----------------------------
 Sou o processo 0 estou testando no tempo 30.0
 Sou o processo 1 estou testando no tempo 30.0

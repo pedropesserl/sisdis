@@ -1,4 +1,5 @@
-/*begin
+/*
+  Autor: Eduardo Faria kruger GRR20232329
   programa: tempo4.c
   Finalidade: Fazer com que a cada teste teste correto, o processo testador obtenha todas as informações do vetor state do processo testado 
   Data da última modificação 30/05/2026
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
   }
   N = atoi(argv[1]);
 
-  printf("-------------------------------------------tempo4.c---------------------------------------\n");
+  printf("------------------------------tempo4.c-----------------------------\n");
   smpl(0, "Meu primeiro programa de simulacao de sistemas distribuidos");
   reset();
   stream(1);
