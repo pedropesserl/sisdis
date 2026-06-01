@@ -240,7 +240,7 @@ make
 
     <ul>
       <li>
-        <a href="./t1/chang-roberts/chang-roberts.c.txt">
+        <a href="./t1/chang-roberts/code/chang-roberts.c.txt">
           chang-roberts.c.txt
         </a>
       </li>
@@ -392,6 +392,10 @@ make
 		O ciclo de enviar/repassar mensagens acaba quando um processo recebe uma mensagem com o seu próprio <code>sender_id</code>. Isso só pode significar que a mensagem que ele enviou deu toda a volta no anel,
 		portanto todos os demais processos sabem que ele é um candidato.
       </li>
+      <li>
+        Como garantir que o sistema fique tolerante a falhas? Guardamos em cada processo um <code>timeout</code> e um <code>alive</code>. Ao receber uma mensagem, o timeout diminui, e quando chega a zero o processo verifica se recebeu a própria mensagem, ou seja, se após <code>timeout</code> iterações ele
+        receber a própria mensagem, tudo certo, mas caso contrário significa que algo deu errado, e todos os processos percebem isso no mesmo instante de tempo, então eles riniciam a rodada, sorteando bits novos e transmitindo suas mensagens. 
+      </li>
 	  <p>A imagem a seguir mostra um diagrama da execução do algoritmo em rodadas assumindo 4 processos (0..3) e apenas o processo 0 como candidato</p>
       <img
     		src="./assets/diagrama_randomized.png"
@@ -508,8 +512,7 @@ make
 
     <h2>5. Conclusão</h2>
     <p>
-    	No geral percebemos a dificuldade de escrever um algoritmo em um sistema distribuído, pois os problemas que aparecem, como por exemplo entender as condições de parada, o que acontece quando um processo falha bem em um instante crítico,
-    	como fazer todos os processos saberem sobre todos os processo, entre outros, não são simples de resolver.
+      Não é nada fácil implementar algoritmos em sistemas distribuídos tolerantes a falhas. Tudo dá errado é muito difícil entender como arrumar depois de uma falha acontecer no sistema. Mas de fato implementar esses algoritmos foi muito útil para o aprendizado da matéria. 
     </p>
   </section>
 
