@@ -30,6 +30,8 @@ typedef struct {
     int pid;              // processId diferente do identificador do SMPL
     bool bit;             // bit sorteado nessa rodada
     bool sent;            // indica se naquela rodada ele ja mandou seu bit ou se deve so repassar o que esta no buffer
+    int timeout;
+    int alive;
     Mensagem msg;         // buffer da mensagem recebida
     Mensagem msg_to_send; // buffer de mensagens a enviar
     bool *candidates;     // processos que acredita serem candidatos
@@ -77,6 +79,8 @@ void init_simulacao(int N, char fa_name[5]) {
         processos[i].id = 0;
         processos[i].pid = i;
         processos[i].bit = randomic(0, 1);
+        processos[i].alive = N;
+        processos[i].timeout = N;
         processos[i].msg = (Mensagem){ .sender_id = -1, .bit = -1 };
     }
     for (int i = 0; i < N; i++) {
@@ -110,11 +114,12 @@ void escalona_rand(int N) {
     for (int i = 0; i < N; i++) {
         schedule(TEST, 1.0, i);
     }
-    for (int i = 0; i < N; i++) {
-        if (randomic(0, 1) == 0) {
-            schedule(FAULT, 2.0, i);
-        }
-    }
+    //for (int i = 0; i < N; i++) {
+    //    if (randomic(0, 1) == 0) {
+    //        schedule(FAULT, 2.0, i);
+    //    }
+    //}
+    schedule(FAULT, 1.5, 0);
 }
 
 void escalona_falhas(int N) {
@@ -197,53 +202,82 @@ void simula(int N, int max_unidades_tempo) {
                 break;
                 
             case RECEIVE:
-                printf("[%4.1f] O processo %d recebeu a mensagem {bit: %d, pid: %d}\n", time(), p->pid, p->msg.bit, p->msg.sender_id);
+                p->timeout--;
+                printf("[%4.1f] O processo %d recebeu a mensagem {bit: %d, pid: %d} e está com o timeout = %d\n", time(), p->pid, p->msg.bit, p->msg.sender_id, p->timeout);
                 num_mensagens++;
+
+                if (p->timeout == 0)
+                {
+                  printf("TIMEOUT CHEGOU NO FINAL AAAAAAAAAAAAAAAA\n");
+                  if(p->msg.sender_id == p->pid)
+                  {
+                    p->timeout = p->alive;
+                    goto lida_com_caso_certo;
+                  }
+                  else
+                  {
+                    //aqui deu muito errado MEEEEEEEEESMO
+                    //temos que atualizar a quantidade de processos vivos no sistema em -1, todos devem sortear o bit por garantia
+                    printf("       O processo %d recebeu uma mensagem que não esperava, logo alguém falhou, reiniciando tudo\n", p->pid);
+                    int novo_bit = randomic(0, 1);
+                    printf("       O processo %d tinha o bit = %d e agora tem o bit = %d \n", p->pid, p->bit, novo_bit);
+                    p->bit = novo_bit;
+                    p->candidates[p->pid] = p->bit;
+                    p->sent = false;
+                    p->alive--;
+                    p->timeout = p->alive;
+                    //printf("AQUI DEU MUITO ERRADO AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+                  }
+                }
+
                 if (p->msg.sender_id != p->pid) { // nao eh a minha propria mensagem, so encaminhar mensagem
                     processos[token].msg_to_send = p->msg;
                     p->candidates[p->msg.sender_id] = p->msg.bit;
                     break;
                 }
-                // recebi minha propria mensagem: fim da rodada
-                num_rodada++;
-                p->sent = false;
-                printf("       O processo %d terminou uma rodada\n", p->pid);
-                int nc = num_candidates(p, N);
-                if (nc == 0) { // falhou
-                    printf("       O processo %d detectou que NAO HA NENHUM candidato: sorteando bit novamente\n", p->pid);
-                    int novo_bit = randomic(0,1);
-                    printf("       O processo %d tinha o bit = %d e agora tem o bit = %d \n", p->pid, p->bit, novo_bit);
-                    p->bit = novo_bit;
-                    p->candidates[p->pid] = p->bit;
-                } else if (nc == 1) { // lider eleito
-                    if (p->bit == 0) {
-                        break; // nao sou o lider eleito
-                    }
-                    printf("[%4.1f] O processo %d foi eleito o lider do sistema\n", time(), p->pid);
-                    printf("FIM DO ALGORITMO (tempo: %4.1f).\n", time());
-                    for (int i = 0; i < N; i++) {
-                        if (status(processos[i].id) != 0) {
-                            printf("O processo %d esta falho\n", i);
-                        } else {
-                            print_beliefs(N, i);
-                        }
-                    }
-                    printf("Total de mensagens transmitidas na execucao do algoritmo: %d\n", num_mensagens);
-                    printf("Total de rodadas necessarias: %d\n", num_rodada);
-                    return; // fim do algoritmo
-                } else {
-                    if (p->bit == 1) {
-                        int novo_bit = randomic(0,1);
-                        printf("       O processo %d tinha o bit = %d e agora tem o bit = %d\n", p->pid, p->bit, novo_bit);
-                        p->bit = novo_bit;
-                        p->candidates[p->pid] = p->bit;
-                    }
 
-                }
-                if (p->pid == 0) { // ultimo processo terminou a rodada
-                    print_candidates(N);    
-                }
-                break;
+                
+                lida_com_caso_certo:
+                  // recebi minha propria mensagem: fim da rodada
+                  num_rodada++;
+                  p->sent = false;
+                  printf("       O processo %d terminou uma rodada\n", p->pid);
+                  int nc = num_candidates(p, N);
+                  if (nc == 0) { // falhou
+                      printf("       O processo %d detectou que NAO HA NENHUM candidato: sorteando bit novamente\n", p->pid);
+                      int novo_bit = randomic(0,1);
+                      printf("       O processo %d tinha o bit = %d e agora tem o bit = %d \n", p->pid, p->bit, novo_bit);
+                      p->bit = novo_bit;
+                      p->candidates[p->pid] = p->bit;
+                  } else if (nc == 1) { // lider eleito
+                      if (p->bit == 0) {
+                          break; // nao sou o lider eleito
+                      }
+                      printf("[%4.1f] O processo %d foi eleito o lider do sistema\n", time(), p->pid);
+                      printf("FIM DO ALGORITMO (tempo: %4.1f).\n", time());
+                      for (int i = 0; i < N; i++) {
+                          if (status(processos[i].id) != 0) {
+                              printf("O processo %d esta falho\n", i);
+                          } else {
+                              print_beliefs(N, i);
+                          }
+                      }
+                      printf("Total de mensagens transmitidas na execucao do algoritmo: %d\n", num_mensagens);
+                      printf("Total de rodadas necessarias: %d\n", num_rodada);
+                      return; // fim do algoritmo
+                  } else {
+                      if (p->bit == 1) {
+                          int novo_bit = randomic(0,1);
+                          printf("       O processo %d tinha o bit = %d e agora tem o bit = %d\n", p->pid, p->bit, novo_bit);
+                          p->bit = novo_bit;
+                          p->candidates[p->pid] = p->bit;
+                      }
+
+                  }
+                  if (p->pid == 0) { // ultimo processo terminou a rodada
+                      print_candidates(N);    
+                  }
+                  break;
             default:
                 break;
         }
@@ -273,10 +307,10 @@ int main(int argc, char **argv) {
         processos[i].candidates = malloc(sizeof(bool) * N);
     }
 
-    printf("---- teste: sem falhas ------------------------------------------\n");
-    init_simulacao(N, fa_name);
-    escalona_sem_falhas(N);
-    simula(N, MaxTempoSimulac);
+    //printf("---- teste: sem falhas ------------------------------------------\n");
+    //init_simulacao(N, fa_name);
+    //escalona_sem_falhas(N);
+    //simula(N, MaxTempoSimulac);
 
     printf("---- teste: falhas aleatorias -----------------------------------\n");
     init_simulacao(N, fa_name);
